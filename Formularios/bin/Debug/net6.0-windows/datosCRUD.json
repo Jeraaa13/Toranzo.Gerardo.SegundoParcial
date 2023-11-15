@@ -1,0 +1,35 @@
+{
+  "$type": "Entidades.Garaje, Entidades",
+  "Vehiculos": {
+    "$type": "System.Collections.Generic.List`1[[Entidades.Vehiculo, Entidades]], System.Private.CoreLib",
+    "$values": [
+      {
+        "$type": "Entidades.Moto, Entidades",
+        "Cilindrada": 123123,
+        "TipoRuedas": 1,
+        "Marca": "123123mm,.m,.m,.m,.m,",
+        "Modelo": ".m,,",
+        "AñoFabricacion": 123,
+        "TipoCombustible": 0
+      },
+      {
+        "$type": "Entidades.Auto, Entidades",
+        "NumeroPuertas": 123123,
+        "Traccion": 2,
+        "Marca": "gsfs",
+        "Modelo": "sdfsdf",
+        "AñoFabricacion": 123,
+        "TipoCombustible": 1
+      },
+      {
+        "$type": "Entidades.Camion, Entidades",
+        "CargaMaxima": 1.1,
+        "NumeroEjes": 111112312,
+        "Marca": ".----",
+        "Modelo": "---",
+        "AñoFabricacion": 123123123,
+        "TipoCombustible": 1
+      }
+    ]
+  }
+}

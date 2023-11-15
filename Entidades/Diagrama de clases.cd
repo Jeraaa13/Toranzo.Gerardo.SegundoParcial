@@ -1,0 +1,91 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="Entidades.Auto">
+    <Position X="2.5" Y="0.75" Width="1.5" />
+    <InheritanceLine Type="Entidades.Vehiculo" FixedToPoint="true">
+      <Path>
+        <Point X="1.352" Y="0.5" />
+        <Point X="1.352" Y="0.148" />
+        <Point X="3.5" Y="0.148" />
+        <Point X="3.5" Y="0.75" />
+      </Path>
+    </InheritanceLine>
+    <TypeIdentifier>
+      <HashCode>AAAAAAAABAAAAAAEoAAAAAAAAIAAAACAEAAEAAAAAiA=</HashCode>
+      <FileName>Auto.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Entidades.Camion">
+    <Position X="6" Y="0.75" Width="1.5" />
+    <InheritanceLine Type="Entidades.Vehiculo" FixedToPoint="true">
+      <Path>
+        <Point X="1.047" Y="0.5" />
+        <Point X="1.047" Y="0.148" />
+        <Point X="6.688" Y="0.148" />
+        <Point X="6.688" Y="0.75" />
+      </Path>
+    </InheritanceLine>
+    <TypeIdentifier>
+      <HashCode>AAAAAAEAAAAAAAAEoAAAAAEAAAIAAAACEAAAAAAAAiA=</HashCode>
+      <FileName>Camion.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Entidades.Garaje">
+    <Position X="7.75" Y="1" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAIAAAAAAAAAAQAEAAAgABAAAAAQAAAAAAAAAAiA=</HashCode>
+      <FileName>Garaje.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Entidades.Moto">
+    <Position X="4.25" Y="0.75" Width="1.5" />
+    <InheritanceLine Type="Entidades.Vehiculo" ManuallyRouted="true" FixedFromPoint="true" FixedToPoint="true">
+      <Path>
+        <Point X="1.188" Y="0.5" />
+        <Point X="1.188" Y="0.148" />
+        <Point X="4.938" Y="0.148" />
+        <Point X="4.938" Y="0.75" />
+      </Path>
+    </InheritanceLine>
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAACAAEoAgAAAAAAAAAAEAAEABAAAAAAiA=</HashCode>
+      <FileName>Moto.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Entidades.Usuario">
+    <Position X="9.5" Y="1" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAQBAACAAAAAAAAAAAQAAACAAAAQAAAAAAA=</HashCode>
+      <FileName>Usuario.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Entidades.Vehiculo">
+    <Position X="0.5" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAgABAAIAAQAAAEoCAAAAAgAAAAAAAAEAgAAAAIAiA=</HashCode>
+      <FileName>Vehiculo.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Enum Name="ETipoCombustible">
+    <Position X="11.25" Y="1" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAgEAAwAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Enumerados\ETipoCombustible.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="ETipoRuedas">
+    <Position X="13" Y="1" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAIAAAAAAAAI=</HashCode>
+      <FileName>Enumerados\ETipoRuedas.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="ETraccion">
+    <Position X="13" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAACAAAAAAAAAAAACAAAAAAAAAAAQAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Enumerados\ETraccion.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>
