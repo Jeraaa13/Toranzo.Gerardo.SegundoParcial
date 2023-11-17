@@ -79,11 +79,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\gerar\\source\\repos\\Toranzo.Gerardo\\Formularios\\Formularios.csproj",
+      "projectUniqueName": "C:\\Users\\gerar\\OneDrive\\Escritorio\\Parcial Laboratorio\\Toranzo.Gerardo.SegundoParcial\\Formularios\\Formularios.csproj",
       "projectName": "Formularios",
-      "projectPath": "C:\\Users\\gerar\\source\\repos\\Toranzo.Gerardo\\Formularios\\Formularios.csproj",
+      "projectPath": "C:\\Users\\gerar\\OneDrive\\Escritorio\\Parcial Laboratorio\\Toranzo.Gerardo.SegundoParcial\\Formularios\\Formularios.csproj",
       "packagesPath": "C:\\Users\\gerar\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\gerar\\source\\repos\\Toranzo.Gerardo\\Formularios\\obj\\",
+      "outputPath": "C:\\Users\\gerar\\OneDrive\\Escritorio\\Parcial Laboratorio\\Toranzo.Gerardo.SegundoParcial\\Formularios\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "C:\\Users\\gerar\\AppData\\Roaming\\NuGet\\NuGet.Config",
@@ -100,8 +100,8 @@
         "net6.0-windows7.0": {
           "targetAlias": "net6.0-windows",
           "projectReferences": {
-            "C:\\Users\\gerar\\source\\repos\\Toranzo.Gerardo\\Entidades\\Entidades.csproj": {
-              "projectPath": "C:\\Users\\gerar\\source\\repos\\Toranzo.Gerardo\\Entidades\\Entidades.csproj"
+            "C:\\Users\\gerar\\OneDrive\\Escritorio\\Parcial Laboratorio\\Toranzo.Gerardo.SegundoParcial\\Entidades\\Entidades.csproj": {
+              "projectPath": "C:\\Users\\gerar\\OneDrive\\Escritorio\\Parcial Laboratorio\\Toranzo.Gerardo.SegundoParcial\\Entidades\\Entidades.csproj"
             }
           }
         }

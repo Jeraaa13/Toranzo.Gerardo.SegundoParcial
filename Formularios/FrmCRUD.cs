@@ -22,7 +22,7 @@ namespace Formularios
     {
         private Usuario usuario;
         private FrmLogin login;
-        private Garaje garaje = new Garaje();
+        private Garaje<T> garaje = new Garaje<T>();
 
         /// <summary>
         /// Constructor de la clase FrmCRUD.
@@ -282,7 +282,7 @@ namespace Formularios
                     };
 
                     string json = File.ReadAllText(rutaArchivo);
-                    garaje = JsonConvert.DeserializeObject<Garaje>(json, settings);
+                    garaje = JsonConvert.DeserializeObject<Garaje<T>>(json, settings);
 
                     ActualizarLstb();
                 }

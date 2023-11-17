@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "9u9YPEjjGfS0COq2sAW49NIyqm904Xc/M2vOsoXWRvTF+tnHVRd+VIQ0PfyarmgydL4svnzlvBaKN032qrJ+BQ==",
+  "dgSpecHash": "C/cjR11OPG3zsgVOLR/ty/0iAoMe4NI6MwMxojhoC9fI8b2SbHabfy12pVOxMq/SBGaoL/xLIR7kyStPunmJAA==",
   "success": true,
-  "projectFilePath": "C:\\Users\\gerar\\source\\repos\\Toranzo.Gerardo\\Entidades\\Entidades.csproj",
+  "projectFilePath": "C:\\Users\\gerar\\OneDrive\\Escritorio\\Parcial Laboratorio\\Toranzo.Gerardo.SegundoParcial\\Entidades\\Entidades.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\gerar\\.nuget\\packages\\newtonsoft.json\\13.0.3\\newtonsoft.json.13.0.3.nupkg.sha512"
   ],

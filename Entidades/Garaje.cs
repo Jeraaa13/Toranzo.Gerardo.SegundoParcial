@@ -10,14 +10,14 @@ namespace Entidades
     /// <summary>
     /// Clase que representa un garaje para almacenar vehículos.
     /// </summary>
-    public class Garaje
+    public class Garaje<T> where T : Vehiculo
     {
-        private List<Vehiculo> vehiculos;
+        private List<T> vehiculos;
 
         /// <summary>
         /// Obtiene o establece la lista de vehículos almacenados en el garaje.
         /// </summary>
-        public List<Vehiculo> Vehiculos
+        public List<T> Vehiculos
         {
             get { return vehiculos; }
             set { vehiculos = value; }
@@ -29,7 +29,7 @@ namespace Entidades
         /// </summary>
         public Garaje()
         {
-            vehiculos = new List<Vehiculo>();
+            vehiculos = new List<T>();
         }
 
         /// <summary>
@@ -39,7 +39,7 @@ namespace Entidades
         /// <param name="v1">Vehículo que se agregará al garaje.</param>
         /// <returns>El garaje con el vehículo agregado, si no estaba presente.</returns>
 
-        public static Garaje operator +(Garaje g1, Vehiculo v1)
+        public static Garaje<T> operator +(Garaje<T> g1, T v1)
         {
             if (!g1.vehiculos.Contains(v1))
             {
@@ -54,7 +54,7 @@ namespace Entidades
         /// <param name="g1">Garaje del que se eliminará el vehículo.</param>
         /// <param name="v1">Vehículo que se eliminará del garaje.</param>
         /// <returns>El garaje con el vehículo eliminado, si estaba presente.</returns>
-        public static Garaje operator -(Garaje g1, Vehiculo v1)
+        public static Garaje<T> operator -(Garaje<T> g1, T v1)
         {
             if (g1.vehiculos.Contains(v1))
             {
@@ -69,7 +69,7 @@ namespace Entidades
         /// <param name="g1">Garaje en el que se buscará el vehículo.</param>
         /// <param name="v1">Vehículo que se buscará en el garaje.</param>
         /// <returns>True si el vehículo está presente en el garaje, False en caso contrario.</returns>
-        public static bool operator ==(Garaje g1, Vehiculo v1)
+        public static bool operator ==(Garaje<T> g1, T v1)
         {
             if (g1 is null)
             {
@@ -85,7 +85,7 @@ namespace Entidades
         /// <param name="g1">Garaje en el que se buscará el vehículo.</param>
         /// <param name="v1">Vehículo que se buscará en el garaje.</param>
         /// <returns>True si el vehículo no está presente en el garaje, False en caso contrario.</returns>
-        public static bool operator !=(Garaje g1, Vehiculo v1)
+        public static bool operator !=(Garaje<T> g1, T v1)
         {
             return !(g1 == v1);
         }
