@@ -7,10 +7,21 @@ namespace Entidades
     /// </summary>
     public abstract class Vehiculo
     {
+        protected int id;
         protected string marca;
         protected string modelo;
         protected int añoFabricacion;
         protected ETipoCombustible tipoCombustible;
+
+        /// <summary>
+        /// Obtiene o establece la id del vehiculo.
+        /// </summary>
+        
+        public int Id
+        {
+            get { return this.id; }
+            set { this.id = value; }
+        }
 
         /// <summary>
         /// Obtiene o establece la marca del vehículo.

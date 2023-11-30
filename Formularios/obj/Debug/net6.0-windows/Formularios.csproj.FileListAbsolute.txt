@@ -27,3 +27,10 @@ C:\Users\gerar\source\repos\Toranzo.Gerardo\Formularios\obj\Debug\net6.0-windows
 C:\Users\gerar\source\repos\Toranzo.Gerardo\Formularios\obj\Debug\net6.0-windows\Formularios.pdb
 C:\Users\gerar\source\repos\Toranzo.Gerardo\Formularios\obj\Debug\net6.0-windows\Formularios.genruntimeconfig.cache
 C:\Users\gerar\source\repos\Toranzo.Gerardo\Formularios\obj\Debug\net6.0-windows\ref\Formularios.dll
+C:\Users\gerar\source\repos\Toranzo.Gerardo\Formularios\bin\Debug\net6.0-windows\System.Data.SqlClient.dll
+C:\Users\gerar\source\repos\Toranzo.Gerardo\Formularios\bin\Debug\net6.0-windows\runtimes\win-arm64\native\sni.dll
+C:\Users\gerar\source\repos\Toranzo.Gerardo\Formularios\bin\Debug\net6.0-windows\runtimes\win-x64\native\sni.dll
+C:\Users\gerar\source\repos\Toranzo.Gerardo\Formularios\bin\Debug\net6.0-windows\runtimes\win-x86\native\sni.dll
+C:\Users\gerar\source\repos\Toranzo.Gerardo\Formularios\bin\Debug\net6.0-windows\runtimes\unix\lib\netcoreapp2.1\System.Data.SqlClient.dll
+C:\Users\gerar\source\repos\Toranzo.Gerardo\Formularios\bin\Debug\net6.0-windows\runtimes\win\lib\netcoreapp2.1\System.Data.SqlClient.dll
+C:\Users\gerar\source\repos\Toranzo.Gerardo\Formularios\bin\Debug\net6.0-windows\Microsoft.Azure.Amqp.dll

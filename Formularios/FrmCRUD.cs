@@ -22,7 +22,8 @@ namespace Formularios
     {
         private Usuario usuario;
         private FrmLogin login;
-        private Garaje<T> garaje = new Garaje<T>();
+        private Garaje garaje = new Garaje();
+        private AccesoDatos accesoDatos = new AccesoDatos();
 
         /// <summary>
         /// Constructor de la clase FrmCRUD.
@@ -57,7 +58,21 @@ namespace Formularios
             DialogResult resultado = frmtipo.ShowDialog();
             if (resultado == DialogResult.OK && frmtipo.Vehiculo != null)
             {
-                garaje += frmtipo.Vehiculo;
+                if (frmtipo.Vehiculo is Auto)
+                {
+                    Auto auto = (Auto)frmtipo.Vehiculo;
+                    accesoDatos.InsertarVehiculo(auto, "Auto");
+                }
+                else if (frmtipo.Vehiculo is Moto)
+                {
+                    Moto moto = (Moto)frmtipo.Vehiculo;
+                    accesoDatos.InsertarVehiculo(moto, "Moto");
+                }
+                else if(frmtipo.Vehiculo is Camion)
+                {
+                    Camion camion = (Camion)frmtipo.Vehiculo;
+                    accesoDatos.InsertarVehiculo(camion, "Camion");
+                }
             }
             ActualizarLstb();
         }
@@ -148,10 +163,7 @@ namespace Formularios
         {
             this.lstbRead.Items.Clear();
 
-            foreach (Vehiculo v in garaje.Vehiculos)
-            {
-                this.lstbRead.Items.Add(v.ToString());
-            }
+            List<Vehiculo> listaVehiculos = accesoObtenerListaDeVehiculos();
         }
 
         /// <summary>
@@ -282,7 +294,7 @@ namespace Formularios
                     };
 
                     string json = File.ReadAllText(rutaArchivo);
-                    garaje = JsonConvert.DeserializeObject<Garaje<T>>(json, settings);
+                    garaje = JsonConvert.DeserializeObject<Garaje>(json, settings);
 
                     ActualizarLstb();
                 }

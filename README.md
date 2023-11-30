@@ -49,4 +49,4 @@ Esta aplicacion, es una herramienta de gestión de vehículos en un garaje. Perm
     ![OrdenarDesc](./Screenshots/OrdenadoDesc.PNG)
 
 3. Salida Segura: Antes de salir, confirmaremos si deseas cerrar la aplicación.
-   ![Salir](./Screenshots/CRUDsalir.PNG)# Toranzo.Gerardo.SegundoParcial
+   ![Salir](./Screenshots/CRUDsalir.PNG)
