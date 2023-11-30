@@ -12,6 +12,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Xml.Serialization;
 using Newtonsoft.Json;
+using System.Data.SqlClient;
 
 namespace Formularios
 {
@@ -20,11 +21,14 @@ namespace Formularios
     /// </summary>
     public partial class FrmCRUD : Form
     {
+        #region Atributos
         private Usuario usuario;
         private FrmLogin login;
         private Garaje garaje = new Garaje();
         private AccesoDatos accesoDatos = new AccesoDatos();
+        #endregion
 
+        #region Constructores
         /// <summary>
         /// Constructor de la clase FrmCRUD.
         /// </summary>
@@ -37,7 +41,13 @@ namespace Formularios
             this.login = login;
             this.usuario = usuario;
         }
+        #endregion
 
+        #region Delegados
+        public delegate Vehiculo MapeadorVehiculo(SqlDataReader reader);
+        #endregion
+
+        #region Metodos
         /// <summary>
         /// Evento que se dispara al cerrar el formulario.
         /// Cierra el formulario de inicio de sesión.
@@ -68,7 +78,7 @@ namespace Formularios
                     Moto moto = (Moto)frmtipo.Vehiculo;
                     accesoDatos.InsertarVehiculo(moto, "Moto");
                 }
-                else if(frmtipo.Vehiculo is Camion)
+                else if (frmtipo.Vehiculo is Camion)
                 {
                     Camion camion = (Camion)frmtipo.Vehiculo;
                     accesoDatos.InsertarVehiculo(camion, "Camion");
@@ -163,7 +173,10 @@ namespace Formularios
         {
             this.lstbRead.Items.Clear();
 
-            List<Vehiculo> listaVehiculos = accesoObtenerListaDeVehiculos();
+            foreach (Vehiculo vehiculo in Garaje.)
+            {
+                this.lstbRead.Items.Add(vehiculo.ToString());
+            }
         }
 
         /// <summary>
@@ -304,5 +317,19 @@ namespace Formularios
                 MessageBox.Show("Error al cargar los datos desde JSON", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
+
+        private void btnCargarDatos_Click(object sender, EventArgs e)
+        {
+            this.Text = "AAAA";
+            List<Vehiculo> listaVehiculos = accesoDatos.LeerListas(this.accesoDatos.MapearAuto);
+
+            foreach (Vehiculo vehiculo in listaVehiculos)
+            {
+                garaje += vehiculo;
+            }
+            ActualizarLstb();
+        }
+
+        #endregion
     }
 }

@@ -555,11 +555,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\gerar\\source\\repos\\Toranzo.Gerardo\\Entidades\\Entidades.csproj",
+      "projectUniqueName": "C:\\Users\\gerar\\source\\repos\\Toranzo.Gerardo\\Toranzo.Gerardo.SegundoParcial\\Entidades\\Entidades.csproj",
       "projectName": "Entidades",
-      "projectPath": "C:\\Users\\gerar\\source\\repos\\Toranzo.Gerardo\\Entidades\\Entidades.csproj",
+      "projectPath": "C:\\Users\\gerar\\source\\repos\\Toranzo.Gerardo\\Toranzo.Gerardo.SegundoParcial\\Entidades\\Entidades.csproj",
       "packagesPath": "C:\\Users\\gerar\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\gerar\\source\\repos\\Toranzo.Gerardo\\Entidades\\obj\\",
+      "outputPath": "C:\\Users\\gerar\\source\\repos\\Toranzo.Gerardo\\Toranzo.Gerardo.SegundoParcial\\Entidades\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "C:\\Users\\gerar\\AppData\\Roaming\\NuGet\\NuGet.Config",

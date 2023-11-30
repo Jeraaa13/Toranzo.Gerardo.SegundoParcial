@@ -19,8 +19,8 @@ namespace Entidades
         /// </summary>
         public List<Vehiculo> Vehiculos
         {
-            get { return vehiculos; }
-            set { vehiculos = value; }
+            get { return this.vehiculos; }
+            set { this.vehiculos = value; }
         }
 
         /// <summary>
@@ -29,7 +29,7 @@ namespace Entidades
         /// </summary>
         public Garaje()
         {
-            vehiculos = new List<Vehiculo>();
+            Vehiculos = new List<Vehiculo>();
         }
 
         /// <summary>
@@ -122,5 +122,33 @@ namespace Entidades
             }
         }
 
+        public override bool Equals(object? obj)
+        {
+            bool retorno = false;
+
+            if (obj is Vehiculo)
+            {
+                retorno = this == (Vehiculo)obj;
+            }
+            if (obj is Auto)
+            {
+                retorno = this == (Auto)obj;
+            }
+            if (obj is Moto)
+            {
+                retorno = this == (Moto)obj;
+            }
+            if (obj is Camion)
+            {
+                retorno = this == (Camion)obj;
+            }
+
+            return retorno;
+        }
+
+        public override int GetHashCode()
+        {
+            throw new NotImplementedException();
+        }
     }
 }

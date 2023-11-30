@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "zGSfUOOj9eoyn+jxjpKbrg3Ul8dMttOFdRB5AHfcGi+fAsfCrPcOQ0v8N52F2dU06GPZwSdxnpqZxck4Qq4/zA==",
+  "dgSpecHash": "KFrDAcjhC92TsdKHUckJg7tVRbo7aP8YpFwSxV6ORX6cpJkuMue7U0STWZRA4UIOpqlUlm8IofFSFvw4+ZKUKw==",
   "success": true,
-  "projectFilePath": "C:\\Users\\gerar\\source\\repos\\Toranzo.Gerardo\\Entidades\\Entidades.csproj",
+  "projectFilePath": "C:\\Users\\gerar\\source\\repos\\Toranzo.Gerardo\\Toranzo.Gerardo.SegundoParcial\\Entidades\\Entidades.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\gerar\\.nuget\\packages\\microsoft.azure.amqp\\2.6.3\\microsoft.azure.amqp.2.6.3.nupkg.sha512",
     "C:\\Users\\gerar\\.nuget\\packages\\microsoft.netcore.platforms\\3.1.0\\microsoft.netcore.platforms.3.1.0.nupkg.sha512",

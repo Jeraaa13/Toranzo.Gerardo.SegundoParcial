@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "MoZFsGmVwuvGJfaPsthwnwnjFZBXhfaMN0jim7qmQZMtpI6czanAg8IyERSFmuCukSK7/VA4mxh0RCLtsLC46A==",
+  "dgSpecHash": "pt0hhD5VIgXTdWH58nqkoSfVKjwVhchemG4c6TRpZMs4xSivSRe3nR0KN7eS0IDpRBtRQPuqoQTomdrvNF50RA==",
   "success": true,
-  "projectFilePath": "C:\\Users\\gerar\\source\\repos\\Toranzo.Gerardo\\Formularios\\Formularios.csproj",
+  "projectFilePath": "C:\\Users\\gerar\\source\\repos\\Toranzo.Gerardo\\Toranzo.Gerardo.SegundoParcial\\Formularios\\Formularios.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\gerar\\.nuget\\packages\\microsoft.azure.amqp\\2.6.3\\microsoft.azure.amqp.2.6.3.nupkg.sha512",
     "C:\\Users\\gerar\\.nuget\\packages\\microsoft.netcore.platforms\\3.1.0\\microsoft.netcore.platforms.3.1.0.nupkg.sha512",

@@ -38,6 +38,7 @@
             btnVisualizador = new Button();
             btnSerializar = new Button();
             btnDeserializar = new Button();
+            btnCargarDatos = new Button();
             SuspendLayout();
             // 
             // btnAgregar
@@ -52,7 +53,7 @@
             // 
             // btnModificar
             // 
-            btnModificar.Location = new Point(150, 238);
+            btnModificar.Location = new Point(113, 238);
             btnModificar.Name = "btnModificar";
             btnModificar.Size = new Size(75, 52);
             btnModificar.TabIndex = 1;
@@ -62,7 +63,7 @@
             // 
             // btnEliminar
             // 
-            btnEliminar.Location = new Point(274, 238);
+            btnEliminar.Location = new Point(203, 238);
             btnEliminar.Name = "btnEliminar";
             btnEliminar.Size = new Size(83, 52);
             btnEliminar.TabIndex = 2;
@@ -99,7 +100,7 @@
             // 
             // btnOrdenar
             // 
-            btnOrdenar.Location = new Point(407, 238);
+            btnOrdenar.Location = new Point(302, 238);
             btnOrdenar.Name = "btnOrdenar";
             btnOrdenar.Size = new Size(88, 52);
             btnOrdenar.TabIndex = 6;
@@ -119,29 +120,40 @@
             // 
             // btnSerializar
             // 
-            btnSerializar.Location = new Point(532, 238);
+            btnSerializar.Location = new Point(501, 238);
             btnSerializar.Name = "btnSerializar";
-            btnSerializar.Size = new Size(75, 23);
+            btnSerializar.Size = new Size(106, 23);
             btnSerializar.TabIndex = 8;
-            btnSerializar.Text = "Serializar";
+            btnSerializar.Text = "Serializar JSON";
             btnSerializar.UseVisualStyleBackColor = true;
             btnSerializar.Click += btnSerializar_Click;
             // 
             // btnDeserializar
             // 
-            btnDeserializar.Location = new Point(532, 267);
+            btnDeserializar.Location = new Point(501, 267);
             btnDeserializar.Name = "btnDeserializar";
-            btnDeserializar.Size = new Size(75, 23);
+            btnDeserializar.Size = new Size(106, 23);
             btnDeserializar.TabIndex = 9;
-            btnDeserializar.Text = "Deserializar";
+            btnDeserializar.Text = "Deserializar JSON";
             btnDeserializar.UseVisualStyleBackColor = true;
             btnDeserializar.Click += btnDeserializar_Click;
+            // 
+            // btnCargarDatos
+            // 
+            btnCargarDatos.Location = new Point(407, 238);
+            btnCargarDatos.Name = "btnCargarDatos";
+            btnCargarDatos.Size = new Size(88, 52);
+            btnCargarDatos.TabIndex = 10;
+            btnCargarDatos.Text = "Cargar Datos";
+            btnCargarDatos.UseVisualStyleBackColor = true;
+            btnCargarDatos.Click += btnCargarDatos_Click;
             // 
             // FrmCRUD
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(614, 297);
+            Controls.Add(btnCargarDatos);
             Controls.Add(btnDeserializar);
             Controls.Add(btnSerializar);
             Controls.Add(btnVisualizador);
@@ -176,5 +188,6 @@
         private Button btnVisualizador;
         private Button btnSerializar;
         private Button btnDeserializar;
+        private Button btnCargarDatos;
     }
 }

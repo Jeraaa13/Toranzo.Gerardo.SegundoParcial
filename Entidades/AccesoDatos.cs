@@ -1,6 +1,7 @@
 ﻿using Microsoft.Azure.Amqp.Framing;
 using System.Data;
 using System.Data.SqlClient;
+using System.Security.Cryptography;
 
 namespace Entidades
 {
@@ -23,6 +24,11 @@ namespace Entidades
             this.conexion = new SqlConnection(AccesoDatos.connectionStr);
         }
         #endregion
+
+        #region Delegados
+        public delegate T DelegadoMapear<T>(SqlDataReader reader);
+        #endregion
+
 
         #region Metodo
         public bool PruebaConexion()
@@ -49,35 +55,59 @@ namespace Entidades
             return retorno;
         }
 
-        public List<Vehiculo> ObtenerListaVehiculos()
+        public List<Vehiculo> LeerListas(Func<SqlDataReader, Vehiculo> mapeador)
         {
             List<Vehiculo> listaVehiculos = new List<Vehiculo>();
 
             using (SqlConnection conexion = new SqlConnection(connectionStr))
             {
-                conexion.Open();
+                this.comando = new SqlCommand();
+                this.comando.CommandType = CommandType.Text;
+                this.comando.CommandText = @"SELECT * FROM Auto
+                                    UNION
+                                    SELECT * FROM Moto
+                                    UNION
+                                    SELECT * FROM Camion";
+                this.comando.Connection = this.conexion;
 
-                string query = @"
-                SELECT 'Auto' AS TipoVehiculo, Id, Marca, Modelo, AñoFabricacion, Combustible, NumeroPuertas, Traccion
-                FROM Auto
-                UNION
-                SELECT 'Moto' AS TipoVehiculo, Id, Marca, Modelo, AñoFabricacion, Combustible, Cilindrada, TipoRuedas
-                UNION
-                SELECT 'Camion' AS TipoVehiculo, Id, Marca, Modelo, AñoFabricacion, CargaMaxima, NumeroEjes
-                FROM Camion";
-
-                using (SqlCommand comando = new SqlCommand(query, conexion))
+                this.conexion.Open();
+                try
                 {
-                    using (SqlDataReader reader = comando.ExecuteReader())
+                    this.lector = this.comando.ExecuteReader();
+                    while (lector.Read())
                     {
-                        while (reader.Read())
-                        {
-                            Vehiculo vehiculo = Constru
-                        }
+                        Vehiculo vehiculo = mapeador(lector);
+                        listaVehiculos.Add(vehiculo);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Error al leer la base de datos: {ex.Message}");
+                }
+                finally
+                {
+                    if (this.conexion.State == ConnectionState.Open)
+                    {
+                        this.conexion.Close();
                     }
                 }
             }
             return listaVehiculos;
+        }
+
+
+        public Auto MapearAuto(SqlDataReader reader)
+        {
+            Auto auto = new Auto();
+            auto.Id = reader.GetInt32(reader.GetOrdinal("Id"));
+            auto.Marca = reader.GetString(reader.GetOrdinal("Marca"));
+            auto.Modelo = reader.GetString(reader.GetOrdinal("Modelo"));
+            auto.AñoFabricacion = reader.GetInt32(reader.GetOrdinal("AñoFabricacion"));
+            auto.TipoCombustible = (ETipoCombustible)reader.GetInt32(reader.GetOrdinal("Combustible"));
+            auto.NumeroPuertas = reader.GetInt32(reader.GetOrdinal("NumeroPuertas"));
+            auto.Traccion = (ETraccion)reader.GetInt32(reader.GetOrdinal("Traccion"));
+
+            return auto;
         }
 
         public bool InsertarVehiculo<T>(T vehiculo, string tabla) where T : Vehiculo
