@@ -211,6 +211,11 @@ namespace Formularios
             FrmTipo frmtipo = new FrmTipo(false);
 
             DialogResult resultado = frmtipo.ShowDialog();
+
+            if (resultado == DialogResult.Cancel)
+            {
+                return;
+            }
             if (frmtipo.Eleccion == 0)
             {
                 listaVehiculos = accesoDatos.LeerListas(this.accesoDatos.MapearAuto, "Auto");

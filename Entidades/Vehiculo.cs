@@ -135,12 +135,14 @@ namespace Entidades
         /// <returns>True si los vehículos son iguales; de lo contrario, false.</returns>
         public override bool Equals(object? obj)
         {
-            bool retorno = false;
-            if (obj is Vehiculo)
-            {
-                retorno = this == (Vehiculo)obj;
-            }
-            return retorno;
+            Vehiculo? v = obj as Vehiculo;
+
+            return v is not null && this == v;
+        }
+
+        public override int GetHashCode()
+        {
+            throw new NotImplementedException();
         }
 
         /// <summary>

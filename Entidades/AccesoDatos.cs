@@ -29,31 +29,7 @@ namespace Entidades
         public delegate T DelegadoMapear<T>(SqlDataReader reader);
         #endregion
 
-
         #region Metodo
-        public bool PruebaConexion()
-        {
-            bool retorno = false;
-
-            try
-            {
-                this.conexion.Open();
-                retorno = true;
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Error: {ex.Message}");
-                throw;
-            }
-            finally
-            {
-                if (this.conexion.State == ConnectionState.Open)
-                {
-                    this.conexion.Close();
-                }
-            }
-            return retorno;
-        }
 
         public List<Vehiculo> LeerListas(Func<SqlDataReader, Vehiculo> mapeador, string tabla)
         {
@@ -70,6 +46,7 @@ namespace Entidades
                 try
                 {
                     this.lector = this.comando.ExecuteReader();
+
                     while (lector.Read())
                     {
                         Vehiculo vehiculo = mapeador(lector);
@@ -139,6 +116,12 @@ namespace Entidades
             {
                 conexion.Open();
 
+                if(ExisteVehiculo(vehiculo, tabla))
+                {
+                    Console.WriteLine("El vehiculo ya existe en la base de datos");
+                    return false;
+                }
+
                 string parametros = "";
                 string values = "";
 
@@ -185,6 +168,25 @@ namespace Entidades
                 }
             }
             return retorno;
+        }
+
+        private bool ExisteVehiculo<T>(T vehiculo, string tabla) where T : Vehiculo
+        {
+            using (SqlConnection conexion = new SqlConnection(connectionStr))
+            {
+                conexion.Open();
+
+                using (SqlCommand comando = new SqlCommand("", conexion))
+                {
+                    comando.Parameters.AddWithValue("@Marca", vehiculo.Marca);
+                    comando.Parameters.AddWithValue("@Modelo", vehiculo.Modelo);
+
+                    comando.CommandText = $"SELECT COUNT(*) FROM {tabla} WHERE Marca = @Marca AND Modelo = @Modelo";
+
+                    int cantidad = (int)comando.ExecuteScalar();
+                    return cantidad > 0;
+                }
+            }
         }
 
         public bool ModificarDatos(Vehiculo v)
