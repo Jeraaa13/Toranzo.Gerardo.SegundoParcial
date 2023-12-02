@@ -55,7 +55,7 @@ namespace Entidades
             return retorno;
         }
 
-        public List<Vehiculo> LeerListas(Func<SqlDataReader, Vehiculo> mapeador)
+        public List<Vehiculo> LeerListas(Func<SqlDataReader, Vehiculo> mapeador, string tabla)
         {
             List<Vehiculo> listaVehiculos = new List<Vehiculo>();
 
@@ -63,11 +63,7 @@ namespace Entidades
             {
                 this.comando = new SqlCommand();
                 this.comando.CommandType = CommandType.Text;
-                this.comando.CommandText = @"SELECT * FROM Auto
-                                    UNION
-                                    SELECT * FROM Moto
-                                    UNION
-                                    SELECT * FROM Camion";
+                this.comando.CommandText = $"SELECT * FROM {tabla}";
                 this.comando.Connection = this.conexion;
 
                 this.conexion.Open();
@@ -106,8 +102,33 @@ namespace Entidades
             auto.TipoCombustible = (ETipoCombustible)reader.GetInt32(reader.GetOrdinal("Combustible"));
             auto.NumeroPuertas = reader.GetInt32(reader.GetOrdinal("NumeroPuertas"));
             auto.Traccion = (ETraccion)reader.GetInt32(reader.GetOrdinal("Traccion"));
-
             return auto;
+        }
+
+        public Camion MapearCamion(SqlDataReader reader)
+        {
+            Camion camion = new Camion();
+            camion.Id = reader.GetInt32(reader.GetOrdinal("Id"));
+            camion.Marca = reader.GetString(reader.GetOrdinal("Marca"));
+            camion.Modelo = reader.GetString(reader.GetOrdinal("Modelo"));
+            camion.AñoFabricacion = reader.GetInt32(reader.GetOrdinal("AñoFabricacion"));
+            camion.TipoCombustible = (ETipoCombustible)reader.GetInt32(reader.GetOrdinal("Combustible"));
+            camion.CargaMaxima = reader.GetInt32(reader.GetOrdinal("CargaMaxima"));
+            camion.NumeroEjes = reader.GetInt32(reader.GetOrdinal("NumeroEjes"));
+            return camion;
+        }
+
+        public Moto MapearMoto(SqlDataReader reader)
+        {
+            Moto moto = new Moto();
+            moto.Id = reader.GetInt32(reader.GetOrdinal("Id"));
+            moto.Marca = reader.GetString(reader.GetOrdinal("Marca"));
+            moto.Modelo = reader.GetString(reader.GetOrdinal("Modelo"));
+            moto.AñoFabricacion = reader.GetInt32(reader.GetOrdinal("AñoFabricacion"));
+            moto.TipoCombustible = (ETipoCombustible)reader.GetInt32(reader.GetOrdinal("Combustible"));
+            moto.Cilindrada = reader.GetInt32(reader.GetOrdinal("Cilindrada"));
+            moto.TipoRuedas = (ETipoRuedas)reader.GetInt32(reader.GetOrdinal("TipoRuedas"));
+            return moto;
         }
 
         public bool InsertarVehiculo<T>(T vehiculo, string tabla) where T : Vehiculo

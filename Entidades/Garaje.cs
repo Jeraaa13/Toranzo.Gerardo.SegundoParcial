@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Xml.Serialization;
 
@@ -41,9 +43,9 @@ namespace Entidades
 
         public static Garaje operator +(Garaje g1, Vehiculo v1)
         {
-            if (!g1.vehiculos.Contains(v1))
+            if (g1 != v1)
             {
-                g1.vehiculos.Add(v1);
+                g1.Vehiculos.Add(v1);
             }
             return g1;
         }
@@ -56,7 +58,7 @@ namespace Entidades
         /// <returns>El garaje con el vehículo eliminado, si estaba presente.</returns>
         public static Garaje operator -(Garaje g1, Vehiculo v1)
         {
-            if (g1.vehiculos.Contains(v1))
+            if (g1 != v1)
             {
                 g1.vehiculos.Remove(v1);
             }
@@ -145,10 +147,11 @@ namespace Entidades
 
             return retorno;
         }
-
         public override int GetHashCode()
         {
             throw new NotImplementedException();
         }
+
+
     }
 }

@@ -1,16 +1,4 @@
 ﻿using Entidades;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Drawing.Drawing2D;
-using System.Linq;
-using System.Reflection.Metadata.Ecma335;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
-using System.Xml.Serialization;
 using Newtonsoft.Json;
 using System.Data.SqlClient;
 
@@ -47,7 +35,7 @@ namespace Formularios
         public delegate Vehiculo MapeadorVehiculo(SqlDataReader reader);
         #endregion
 
-        #region Metodos
+        #region Eventos
         /// <summary>
         /// Evento que se dispara al cerrar el formulario.
         /// Cierra el formulario de inicio de sesión.
@@ -63,26 +51,15 @@ namespace Formularios
         /// </summary>
         private void btnAgregar_Click(object sender, EventArgs e)
         {
-            FrmTipo frmtipo = new FrmTipo();
+            FrmTipo frmtipo = new FrmTipo(true);
 
             DialogResult resultado = frmtipo.ShowDialog();
             if (resultado == DialogResult.OK && frmtipo.Vehiculo != null)
             {
-                if (frmtipo.Vehiculo is Auto)
-                {
-                    Auto auto = (Auto)frmtipo.Vehiculo;
-                    accesoDatos.InsertarVehiculo(auto, "Auto");
-                }
-                else if (frmtipo.Vehiculo is Moto)
-                {
-                    Moto moto = (Moto)frmtipo.Vehiculo;
-                    accesoDatos.InsertarVehiculo(moto, "Moto");
-                }
-                else if (frmtipo.Vehiculo is Camion)
-                {
-                    Camion camion = (Camion)frmtipo.Vehiculo;
-                    accesoDatos.InsertarVehiculo(camion, "Camion");
-                }
+                string tipoVehiculo = ObtenerTipoVehiculo(frmtipo.Vehiculo);
+
+                accesoDatos.InsertarVehiculo(frmtipo.Vehiculo, tipoVehiculo);
+                garaje += frmtipo.Vehiculo;
             }
             ActualizarLstb();
         }
@@ -167,19 +144,6 @@ namespace Formularios
         }
 
         /// <summary>
-        /// Actualiza el contenido de la lista de vehículos en el formulario.
-        /// </summary>
-        private void ActualizarLstb()
-        {
-            this.lstbRead.Items.Clear();
-
-            foreach (Vehiculo vehiculo in Garaje.)
-            {
-                this.lstbRead.Items.Add(vehiculo.ToString());
-            }
-        }
-
-        /// <summary>
         /// Evento que se dispara al cargar el formulario.
         /// Realiza inicializaciones y carga de datos.
         /// </summary>
@@ -215,19 +179,6 @@ namespace Formularios
         }
 
         /// <summary>
-        /// Guarda un registro de acceso del usuario en un archivo de registro.
-        /// </summary>
-        private void ArchivarDatos()
-        {
-            string logPath = "usuarios.log";
-            using (StreamWriter sw = File.AppendText(logPath))
-            {
-                string logEntry = $"{DateTime.Now:yyyy-MM-dd HH:mm:ss} - Usuario: {usuario.nombre} {usuario.apellido} accedió a la aplicación";
-                sw.WriteLine(logEntry);
-            }
-        }
-
-        /// <summary>
         /// Muestra el formulario para visualizar registros de acceso.
         /// </summary>
         private void btnVisualizador_Click(object sender, EventArgs e)
@@ -252,6 +203,74 @@ namespace Formularios
         private void btnDeserializar_Click(object sender, EventArgs e)
         {
             CargarColeccion();
+        }
+        private void btnCargarDatos_Click(object sender, EventArgs e)
+        {
+            List<Vehiculo> listaVehiculos = null;
+
+            FrmTipo frmtipo = new FrmTipo(false);
+
+            DialogResult resultado = frmtipo.ShowDialog();
+            if (frmtipo.Eleccion == 0)
+            {
+                listaVehiculos = accesoDatos.LeerListas(this.accesoDatos.MapearAuto, "Auto");
+            }
+            else if (frmtipo.Eleccion == 1)
+            {
+                listaVehiculos = accesoDatos.LeerListas(this.accesoDatos.MapearCamion, "Camion");
+            }
+            else if (frmtipo.Eleccion == 2)
+            {
+                listaVehiculos = accesoDatos.LeerListas(this.accesoDatos.MapearMoto, "Moto");
+            }
+            if (listaVehiculos != null)
+            {
+                foreach (Vehiculo vehiculo in listaVehiculos)
+                {
+                    garaje += vehiculo;
+                }
+                ActualizarLstb();
+            }
+        }
+        #endregion
+
+        #region Metodos
+        private string ObtenerTipoVehiculo(Vehiculo vehiculo)
+        {
+            if (vehiculo is Auto)
+                return "Auto";
+            else if (vehiculo is Moto)
+                return "Moto";
+            else if (vehiculo is Camion)
+                return "Camion";
+
+            throw new InvalidOperationException("Tipo de vehiculo indefinido");
+        }
+
+        /// <summary>
+        /// Actualiza el contenido de la lista de vehículos en el formulario.
+        /// </summary>
+        private void ActualizarLstb()
+        {
+            this.lstbRead.Items.Clear();
+
+            foreach (Vehiculo vehiculo in garaje.Vehiculos)
+            {
+                this.lstbRead.Items.Add(vehiculo.ToString());
+            }
+        }
+
+        /// <summary>
+        /// Guarda un registro de acceso del usuario en un archivo de registro.
+        /// </summary>
+        private void ArchivarDatos()
+        {
+            string logPath = "usuarios.log";
+            using (StreamWriter sw = File.AppendText(logPath))
+            {
+                string logEntry = $"{DateTime.Now:yyyy-MM-dd HH:mm:ss} - Usuario: {usuario.nombre} {usuario.apellido} accedió a la aplicación";
+                sw.WriteLine(logEntry);
+            }
         }
 
         /// <summary>
@@ -316,18 +335,6 @@ namespace Formularios
             {
                 MessageBox.Show("Error al cargar los datos desde JSON", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
-        }
-
-        private void btnCargarDatos_Click(object sender, EventArgs e)
-        {
-            this.Text = "AAAA";
-            List<Vehiculo> listaVehiculos = accesoDatos.LeerListas(this.accesoDatos.MapearAuto);
-
-            foreach (Vehiculo vehiculo in listaVehiculos)
-            {
-                garaje += vehiculo;
-            }
-            ActualizarLstb();
         }
 
         #endregion

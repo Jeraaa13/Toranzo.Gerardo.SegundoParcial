@@ -17,6 +17,14 @@ namespace Formularios
     public partial class FrmTipo : Form
     {
         private Vehiculo? vehiculo;
+        private bool leerTabla;
+        private int eleccion;
+
+        public int Eleccion
+        {
+            get { return this.eleccion; }
+            set { this.eleccion = value; }
+        }
 
         /// <summary>
         /// Obtiene el vehículo seleccionado por el usuario.
@@ -33,6 +41,11 @@ namespace Formularios
         public FrmTipo()
         {
             InitializeComponent();
+        }
+
+        public FrmTipo(bool leerTabla): this()
+        {
+            this.leerTabla = leerTabla;
         }
 
         /// <summary>
@@ -53,26 +66,37 @@ namespace Formularios
             DialogResult resultado;
             if (this.rdbAuto.Checked)
             {
-                FrmAuto frmauto = new FrmAuto();
-                resultado = frmauto.ShowDialog();
-                if (resultado == DialogResult.OK)
-                {
-                    vehiculo = frmauto.Auto;
+                eleccion = 0;
+                if (leerTabla == true)
+                { 
+                    FrmAuto frmauto = new FrmAuto();
+                    resultado = frmauto.ShowDialog();
+                    if (resultado == DialogResult.OK)
+                    {
+                        vehiculo = frmauto.Auto;
+                    }
+                    this.Hide();
                 }
-                this.Hide();
             }
             else if (this.rdbCamion.Checked)
             {
-                FrmCamion frmcamion = new FrmCamion();
-                resultado = frmcamion.ShowDialog();
-                if (resultado == DialogResult.OK)
+                eleccion = 1;
+                if (leerTabla == true)
                 {
-                    vehiculo = frmcamion.Camion;
+                    FrmCamion frmcamion = new FrmCamion();
+                    resultado = frmcamion.ShowDialog();
+                    if (resultado == DialogResult.OK)
+                    {
+                        vehiculo = frmcamion.Camion;
+                    }
+                    this.Hide();
                 }
-                this.Hide();
             }
             else if (this.rdbMoto.Checked)
             {
+                eleccion = 2;
+                if (leerTabla == true)
+                {
                 FrmMoto frmmoto = new FrmMoto();
                 resultado = frmmoto.ShowDialog();
                 if (resultado == DialogResult.OK)
@@ -80,6 +104,7 @@ namespace Formularios
                     vehiculo = frmmoto.Moto;
                 }
                 this.Hide();
+                }
             }
             else
             {
