@@ -17,6 +17,7 @@ namespace Formularios
     public partial class FrmAuto : FrmVehiculo
     {
         private Auto auto;
+        private int id;
 
         /// <summary>
         /// Obtiene o establece el objeto Auto creado o editado en el formulario.
@@ -25,6 +26,11 @@ namespace Formularios
         {
             get { return this.auto; }
             set { this.auto = value; }
+        }
+
+        private int Id
+        {
+            get { return this.id; }
         }
 
         /// <summary>
@@ -47,6 +53,7 @@ namespace Formularios
         /// </summary>
         public FrmAuto(Auto auto) : this()
         {
+            this.id = auto.Id;
             this.txtMarca.Text = auto.Marca;
             this.txtModelo.Text = auto.Modelo;
             this.txtAñoFabricacion.Text = auto.AñoFabricacion.ToString();
@@ -97,8 +104,8 @@ namespace Formularios
             modelo = txtModelo.Text;
             añoFabricacion = int.Parse(txtAñoFabricacion.Text);
             tipoCombustible = (ETipoCombustible)cbCombustible.SelectedItem;
-
-            this.auto = new Auto(numeroPuertas, traccion, marca, modelo, añoFabricacion, tipoCombustible);
+            
+            this.auto = new Auto(id, numeroPuertas, traccion, marca, modelo, añoFabricacion, tipoCombustible);
 
             DialogResult = DialogResult.OK;
         }

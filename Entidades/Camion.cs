@@ -95,11 +95,12 @@ namespace Entidades
         /// <param name="tipoCombustible">El tipo de combustible del Camion.</param>
         /// <param name="numeroEjes">Cantiadad de ejes del Camion</param>
         /// <param name="cargaMaxima">Carga maxima del Camion</param>
-        public Camion(double cargaMaxima, int numeroEjes, string marca, string modelo, int añoFabricacion, ETipoCombustible tipoCombustible)
+        public Camion(int id, double cargaMaxima, int numeroEjes, string marca, string modelo, int añoFabricacion, ETipoCombustible tipoCombustible)
                 : this(marca, modelo, añoFabricacion, tipoCombustible)
         {
             this.cargaMaxima = cargaMaxima;
             this.numeroEjes = numeroEjes;
+            this.id = id;
         }
 
         /// <summary>

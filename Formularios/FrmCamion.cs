@@ -17,6 +17,7 @@ namespace Formularios
     public partial class FrmCamion : FrmVehiculo
     {
         private Camion camion;
+        private int id;
 
         /// <summary>
         /// Obtiene o establece el objeto Camion creado o editado en el formulario.
@@ -25,6 +26,10 @@ namespace Formularios
         {
             get { return this.camion; }
             set { this.camion = value; }
+        }
+        private int Id
+        {
+            get { return this.id; }
         }
 
         /// <summary>
@@ -43,6 +48,7 @@ namespace Formularios
         /// <param name="camion">El camión a editar.</param>
         public FrmCamion(Camion camion) : this()
         {
+            this.id = camion.Id;
             this.txtMarca.Text = camion.Marca;
             this.txtModelo.Text = camion.Modelo;
             this.txtAñoFabricacion.Text = camion.AñoFabricacion.ToString();
@@ -95,7 +101,7 @@ namespace Formularios
             tipoCombustible = (ETipoCombustible)cbCombustible.SelectedItem;
 
 
-            camion = new Camion(cargaMaxima, numeroEjes, marca, modelo, añoFabricacion, tipoCombustible);
+            camion = new Camion(id, cargaMaxima, numeroEjes, marca, modelo, añoFabricacion, tipoCombustible);
 
             DialogResult = DialogResult.OK;
         }

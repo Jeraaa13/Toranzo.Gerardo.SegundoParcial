@@ -91,11 +91,12 @@ namespace Entidades
         /// <param name="tipoCombustible">El tipo de combustible del Auto.</param>
         /// <param name="numeroPuertas">La cantidad de puertas del Auto</param>
         /// <param name="traccion">El tipo de traccion del Auto</param>
-        public Auto(int numeroPuertas, ETraccion traccion, string marca, string modelo, int añoFabricacion, ETipoCombustible tipoCombustible)
+        public Auto(int id, int numeroPuertas, ETraccion traccion, string marca, string modelo, int añoFabricacion, ETipoCombustible tipoCombustible)
                 : this(marca, modelo, añoFabricacion, tipoCombustible)
         {
             this.numeroPuertas = numeroPuertas;
             this.traccion = traccion;
+            this.id = id;
         }
 
         /// <summary>

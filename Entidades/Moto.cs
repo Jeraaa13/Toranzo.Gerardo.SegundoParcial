@@ -95,11 +95,12 @@ namespace Entidades
         /// <param name="tipoCombustible">Tipo de combustible de la moto.</param>
         /// <param name="tipoRuedas">El tipo de ruedas de la moto.</param>
         /// <param name="cilindrada">La cilindrada de la moto.</param>
-        public Moto(int cilindrada, ETipoRuedas tipoRuedas, string marca, string modelo, int añoFabricacion, ETipoCombustible tipoCombustible)
+        public Moto(int id, int cilindrada, ETipoRuedas tipoRuedas, string marca, string modelo, int añoFabricacion, ETipoCombustible tipoCombustible)
                 : this(marca, modelo, añoFabricacion, tipoCombustible)
         {
             this.cilindrada = cilindrada;
             this.tipoRuedas = tipoRuedas;
+            this.id = id;
         }
 
         /// <summary>

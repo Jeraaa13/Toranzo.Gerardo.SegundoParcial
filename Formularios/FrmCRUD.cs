@@ -115,6 +115,7 @@ namespace Formularios
                     resultado = frmAuto.ShowDialog();
                     if (resultado == DialogResult.OK)
                     {
+                        accesoDatos.ModificarDatos(frmAuto.Auto, "Auto");
                         garaje.Vehiculos[index] = frmAuto.Auto;
                     }
                 }
@@ -125,6 +126,7 @@ namespace Formularios
                     resultado = frmMoto.ShowDialog();
                     if (resultado == DialogResult.OK)
                     {
+                        accesoDatos.ModificarDatos(frmMoto.Moto, "Moto");
                         garaje.Vehiculos[index] = frmMoto.Moto;
 
                     }
@@ -136,6 +138,7 @@ namespace Formularios
                     resultado = frmCamion.ShowDialog();
                     if (resultado == DialogResult.OK)
                     {
+                        accesoDatos.ModificarDatos(frmCamion.Camion, "Camion");
                         garaje.Vehiculos[index] = frmCamion.Camion;
                     }
                 }

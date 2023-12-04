@@ -18,6 +18,7 @@ namespace Formularios
     public partial class FrmMoto : FrmVehiculo
     {
         private Moto moto;
+        private int id;
 
         /// <summary>
         /// Obtiene o establece el objeto Moto creado o editado en el formulario.
@@ -26,6 +27,11 @@ namespace Formularios
         {
             get { return this.moto; }
             set { this.moto = value; }
+        }
+
+        private int Id
+        {
+            get { return this.id; }
         }
         /// <summary>
         /// Constructor predeterminado del formulario.
@@ -47,6 +53,7 @@ namespace Formularios
         /// </summary>
         public FrmMoto(Moto moto) : this()
         {
+            this.id = moto.Id;
             this.txtMarca.Text = moto.Marca;
             this.txtModelo.Text = moto.Modelo;
             this.txtAñoFabricacion.Text = moto.AñoFabricacion.ToString();
@@ -98,7 +105,7 @@ namespace Formularios
             añoFabricacion = int.Parse(txtAñoFabricacion.Text);
             tipoCombustible = (ETipoCombustible)cbCombustible.SelectedItem;
 
-            moto = new Moto(cilindrada, ruedas, marca, modelo, añoFabricacion, tipoCombustible);
+            moto = new Moto(id, cilindrada, ruedas, marca, modelo, añoFabricacion, tipoCombustible);
 
             DialogResult = DialogResult.OK;
         }

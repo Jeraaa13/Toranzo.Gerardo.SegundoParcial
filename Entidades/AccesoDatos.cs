@@ -1,6 +1,8 @@
 ﻿using Microsoft.Azure.Amqp.Framing;
 using System.Data;
 using System.Data.SqlClient;
+using System.Diagnostics;
+using System.Reflection.Metadata.Ecma335;
 using System.Security.Cryptography;
 
 namespace Entidades
@@ -12,25 +14,25 @@ namespace Entidades
         private static string connectionStr;
         public SqlCommand comando;
         private SqlDataReader lector;
+        DelegadoConfigurarParametros configurarParametrosAuto = (comando, vehiculo) => SetearParametrosAuto(comando, (Auto)vehiculo);
+        DelegadoConfigurarParametros configurarParametrosMoto = (comando, vehiculo) => SetearParametrosMoto(comando, (Moto)vehiculo);
+        DelegadoConfigurarParametros configurarParametrosCamion = (comando, vehiculo) => SetearParametrosCamion(comando, (Camion)vehiculo);
         #endregion
 
         #region Constructores       
-        static AccesoDatos()
-        {
-            AccesoDatos.connectionStr = Properties.Resources.miConexion;
-        }
         public AccesoDatos()
         {
-            this.conexion = new SqlConnection(AccesoDatos.connectionStr);
+            connectionStr = Properties.Resources.miConexion;
+            conexion = new SqlConnection(connectionStr);
         }
         #endregion
 
         #region Delegados
         public delegate T DelegadoMapear<T>(SqlDataReader reader);
+        public delegate void DelegadoConfigurarParametros(SqlCommand comando, Vehiculo vehiculo);
         #endregion
 
         #region Metodo
-
         public List<Vehiculo> LeerListas(Func<SqlDataReader, Vehiculo> mapeador, string tabla)
         {
             List<Vehiculo> listaVehiculos = new List<Vehiculo>();
@@ -67,8 +69,6 @@ namespace Entidades
             }
             return listaVehiculos;
         }
-
-
         public Auto MapearAuto(SqlDataReader reader)
         {
             Auto auto = new Auto();
@@ -81,7 +81,6 @@ namespace Entidades
             auto.Traccion = (ETraccion)reader.GetInt32(reader.GetOrdinal("Traccion"));
             return auto;
         }
-
         public Camion MapearCamion(SqlDataReader reader)
         {
             Camion camion = new Camion();
@@ -94,7 +93,6 @@ namespace Entidades
             camion.NumeroEjes = reader.GetInt32(reader.GetOrdinal("NumeroEjes"));
             return camion;
         }
-
         public Moto MapearMoto(SqlDataReader reader)
         {
             Moto moto = new Moto();
@@ -107,69 +105,65 @@ namespace Entidades
             moto.TipoRuedas = (ETipoRuedas)reader.GetInt32(reader.GetOrdinal("TipoRuedas"));
             return moto;
         }
-
         public bool InsertarVehiculo<T>(T vehiculo, string tabla) where T : Vehiculo
         {
             bool retorno = false;
+            string parametros = "(Marca, Modelo, AñoFabricacion, Combustible,";
+            string values = "(@Marca, @Modelo, @AñoFabricacion, @Combustible,";
 
             using (SqlConnection conexion = new SqlConnection(connectionStr))
             {
                 conexion.Open();
 
-                if(ExisteVehiculo(vehiculo, tabla))
+                if (ExisteVehiculo(vehiculo, tabla))
                 {
                     Console.WriteLine("El vehiculo ya existe en la base de datos");
                     return false;
                 }
 
-                string parametros = "";
-                string values = "";
-
-                using (SqlCommand comando = new SqlCommand("", conexion))
+                if (comando == null)
                 {
-                    comando.Parameters.AddWithValue("@Marca", vehiculo.Marca);
-                    comando.Parameters.AddWithValue("@Modelo", vehiculo.Modelo);
-                    comando.Parameters.AddWithValue("@AñoFabricacion", vehiculo.AñoFabricacion);
-                    comando.Parameters.AddWithValue("@Combustible", vehiculo.TipoCombustible);
+                    comando = new SqlCommand("", conexion);
+                }
+                else
+                {
+                    comando.Connection = conexion;
+                }
 
-                    if (vehiculo is Auto auto)
-                    {
-                        parametros = "(Marca, Modelo, AñoFabricacion, Combustible, NumeroPuertas, Traccion)";
-                        values = "(@Marca, @Modelo, @AñoFabricacion, @Combustible, @NumeroPuertas, @Traccion)";
-                        comando.Parameters.AddWithValue("@NumeroPuertas", auto.NumeroPuertas);
-                        comando.Parameters.AddWithValue("@Traccion", auto.Traccion);
-                    }
-                    else if (vehiculo is Moto moto)
-                    {
-                        parametros = "(Marca, Modelo, AñoFabricacion, Combustible, Cilindrada, TipoRuedas)";
-                        values = "(@Marca, @Modelo, @AñoFabricacion, @Combustible, @Cilindrada, @TipoRuedas)";
-                        comando.Parameters.AddWithValue("@Cilindrada", moto.Cilindrada);
-                        comando.Parameters.AddWithValue("@TipoRuedas", moto.TipoRuedas);
-                    }
-                    else if (vehiculo is Camion camion)
-                    {
-                        parametros = "(Marca, Modelo, AñoFabricacion, Combustible, CargaMaxima, NumeroEjes)";
-                        values = "(@Marca, @Modelo, @AñoFabricacion, @Combustible, @CargaMaxima, @NumeroEjes)";
-                        comando.Parameters.AddWithValue("@CargaMaxima", camion.CargaMaxima);
-                        comando.Parameters.AddWithValue("@NumeroEjes", camion.NumeroEjes);
-                    }
+                if (vehiculo is Auto auto)
+                {
+                    parametros += " NumeroPuertas, Traccion)";
+                    values += " @NumeroPuertas, @Traccion)";
+                    configurarParametrosAuto(comando, auto);
+                }
+                else if (vehiculo is Moto moto)
+                {
+                    parametros += " Cilindrada, TipoRuedas)";
+                    values += " @Cilindrada, @TipoRuedas)";
+                    configurarParametrosMoto(comando, moto);
+                }
+                else if (vehiculo is Camion camion)
+                {
+                    parametros += " CargaMaxima, NumeroEjes)";
+                    values += " @CargaMaxima, @NumeroEjes)";
+                    configurarParametrosCamion(comando, camion);
+                }
 
-                    comando.CommandText = $"INSERT INTO {tabla} {parametros} VALUES {values}";
-                    try
-                    {
-                        comando.ExecuteNonQuery();
-                        retorno = true;
-                    }
-                    catch (Exception ex)
-                    {
-                        Console.WriteLine($"Error al insertar vehiculo: {ex.Message}");
-                        retorno = false;
-                    }
+                comando.CommandText = $"INSERT INTO {tabla} {parametros} VALUES {values}";
+
+                try
+                {
+                    comando.ExecuteNonQuery();
+                    retorno = true;
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Error al insertar vehiculo: {ex.Message}");
+                    retorno = false;
                 }
             }
             return retorno;
         }
-
         private bool ExisteVehiculo<T>(T vehiculo, string tabla) where T : Vehiculo
         {
             using (SqlConnection conexion = new SqlConnection(connectionStr))
@@ -188,46 +182,90 @@ namespace Entidades
                 }
             }
         }
-
-        public bool ModificarDatos(Vehiculo v)
+        public bool ModificarDatos(Vehiculo vehiculo, string tabla)
         {
             bool retorno = false;
 
-            try
+            string values = "Marca = @Marca, Modelo = @Modelo, AñoFabricacion = @AñoFabricacion, Combustible = @Combustible,";
+
+            using (SqlCommand comando = new SqlCommand())
             {
-                this.comando = new SqlCommand();
-                this.comando.Parameters.AddWithValue("@marca", v.Marca);
-                this.comando.Parameters.AddWithValue("@modelo", v.Modelo);
-                this.comando.Parameters.AddWithValue("@añoFabricacion", v.AñoFabricacion);
-                this.comando.Parameters.AddWithValue("@tipoCombustible", v.TipoCombustible);
-                this.comando.CommandType = CommandType.Text;
-                this.comando.CommandText = $"UPDATE dato SET marca=@marca,modelo=@modelo,añoFabricacion=@añoFabricacion,tipoCombustible=@tipoCombustible WHERE id = @id";
+                comando.CommandType = CommandType.Text;
 
-                this.comando.Connection = this.conexion;
-
-                this.conexion.Open();
-
-                int filasAfectadas = this.comando.ExecuteNonQuery();
-
-                if (filasAfectadas == 1)
+                if (vehiculo is Auto auto)
                 {
-                    retorno = true;
+                    values += " numeroPuertas = @numeroPuertas, traccion = @traccion";
+                    configurarParametrosAuto(comando, auto);
+                }
+                else if (vehiculo is Moto moto)
+                {
+                    values += " cilindrada = @cilindrada, tipoRuedas = @tipoRuedas";
+                    configurarParametrosMoto(comando, moto);
+                }
+                else if (vehiculo is Camion camion)
+                {
+                    values += " cargaMaxima = @cargaMaxima, numeroEjes = @numeroEjes";
+                    configurarParametrosCamion(comando, camion);
+                }
+
+                try
+                {
+                    comando.CommandText = $"UPDATE {tabla} SET {values} WHERE id = @id";
+
+                    comando.Connection = conexion;
+
+                    conexion.Open();
+
+                    int filasAfectadas = comando.ExecuteNonQuery();
+
+                    if (filasAfectadas == 1)
+                    {
+                        retorno = true;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Error: {ex.Message}");
+                    throw new Exception("Error al modificar datos en la base de datos", ex);
+                }
+                finally
+                {
+                    if (conexion.State == ConnectionState.Open)
+                    {
+                        conexion.Close();
+                    }
                 }
             }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Error: {ex.Message}");
-                throw new Exception("Error al modificar datos en la base de datos", ex);
-            }
 
-            finally
-            {
-                if (this.conexion.State == ConnectionState.Open)
-                {
-                    this.conexion.Close();
-                }
-            }
             return retorno;
+        }
+
+        public static void SetearParametrosVehiculo(SqlCommand comando, Vehiculo vehiculo)
+        {
+            comando.Parameters.Clear();
+            comando.Parameters.AddWithValue("@Id", vehiculo.Id);
+            comando.Parameters.AddWithValue("@Marca", vehiculo.Marca);
+            comando.Parameters.AddWithValue("@Modelo", vehiculo.Modelo);
+            comando.Parameters.AddWithValue("@AñoFabricacion", vehiculo.AñoFabricacion);
+            comando.Parameters.AddWithValue("@Combustible", vehiculo.TipoCombustible);
+        }
+        public static void SetearParametrosAuto(SqlCommand comando, Auto auto)
+        {
+            SetearParametrosVehiculo(comando, auto);
+            comando.Parameters.AddWithValue("@NumeroPuertas", auto.NumeroPuertas);
+            comando.Parameters.AddWithValue("@Traccion", auto.Traccion);
+        }
+        public static void SetearParametrosMoto(SqlCommand comando, Moto moto)
+        {
+            SetearParametrosVehiculo(comando, moto);
+            comando.Parameters.AddWithValue("@Cilindrada", moto.Cilindrada);
+            comando.Parameters.AddWithValue("@TipoRuedas", moto.TipoRuedas);
+        }
+        public static void SetearParametrosCamion(SqlCommand comando,  Camion camion)
+        {
+            SetearParametrosVehiculo(comando, camion);
+            comando.Parameters.AddWithValue("@CargaMaxima", camion.CargaMaxima);
+            comando.Parameters.AddWithValue("@NumeroEjes", camion.NumeroEjes);
         }
         #endregion
     }
