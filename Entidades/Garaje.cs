@@ -58,12 +58,13 @@ namespace Entidades
         /// <returns>El garaje con el vehículo eliminado, si estaba presente.</returns>
         public static Garaje operator -(Garaje g1, Vehiculo v1)
         {
-            if (g1 != v1)
+            if (g1 == v1)
             {
                 g1.vehiculos.Remove(v1);
             }
             return g1;
         }
+
 
         /// <summary>
         /// Comprueba si un vehículo está presente en el garaje.

@@ -1,7 +1,9 @@
 ﻿using Microsoft.Azure.Amqp.Framing;
+using Newtonsoft.Json;
 using System.Data;
 using System.Data.SqlClient;
 using System.Diagnostics;
+using System.IO.MemoryMappedFiles;
 using System.Reflection.Metadata.Ecma335;
 using System.Security.Cryptography;
 
@@ -14,9 +16,11 @@ namespace Entidades
         private static string connectionStr;
         public SqlCommand comando;
         private SqlDataReader lector;
-        DelegadoConfigurarParametros configurarParametrosAuto = (comando, vehiculo) => SetearParametrosAuto(comando, (Auto)vehiculo);
-        DelegadoConfigurarParametros configurarParametrosMoto = (comando, vehiculo) => SetearParametrosMoto(comando, (Moto)vehiculo);
-        DelegadoConfigurarParametros configurarParametrosCamion = (comando, vehiculo) => SetearParametrosCamion(comando, (Camion)vehiculo);
+
+        public DelegadoConfigurarParametros configurarParametrosAuto;
+        public DelegadoConfigurarParametros configurarParametrosMoto;
+        public DelegadoConfigurarParametros configurarParametrosCamion;
+
         #endregion
 
         #region Constructores       
@@ -24,20 +28,25 @@ namespace Entidades
         {
             connectionStr = Properties.Resources.miConexion;
             conexion = new SqlConnection(connectionStr);
+
+            configurarParametrosAuto = (vehiculo) => SetearParametrosAuto((Auto)vehiculo);
+            configurarParametrosMoto = (vehiculo) => SetearParametrosMoto((Moto)vehiculo);
+            configurarParametrosCamion = (vehiculo) => SetearParametrosCamion((Camion)vehiculo);
         }
+
         #endregion
 
         #region Delegados
         public delegate T DelegadoMapear<T>(SqlDataReader reader);
-        public delegate void DelegadoConfigurarParametros(SqlCommand comando, Vehiculo vehiculo);
+        public delegate void DelegadoConfigurarParametros(Vehiculo vehiculo);
         #endregion
 
         #region Metodo
-        public List<Vehiculo> LeerListas(Func<SqlDataReader, Vehiculo> mapeador, string tabla)
+        public List<Vehiculo> LeerListas<T>(Func<SqlDataReader, T> mapeador, string tabla) where T : Vehiculo
         {
             List<Vehiculo> listaVehiculos = new List<Vehiculo>();
 
-            using (SqlConnection conexion = new SqlConnection(connectionStr))
+            try
             {
                 this.comando = new SqlCommand();
                 this.comando.CommandType = CommandType.Text;
@@ -45,30 +54,29 @@ namespace Entidades
                 this.comando.Connection = this.conexion;
 
                 this.conexion.Open();
-                try
-                {
-                    this.lector = this.comando.ExecuteReader();
 
-                    while (lector.Read())
-                    {
-                        Vehiculo vehiculo = mapeador(lector);
-                        listaVehiculos.Add(vehiculo);
-                    }
-                }
-                catch (Exception ex)
+                this.lector = this.comando.ExecuteReader();
+
+                while (lector.Read())
                 {
-                    Console.WriteLine($"Error al leer la base de datos: {ex.Message}");
+                    T vehiculo = mapeador(lector);
+                    listaVehiculos.Add(vehiculo);
                 }
-                finally
+            }
+            catch(Exception ex)
+            {
+                Console.WriteLine($"Error al leer la base de datos: {ex.Message}");
+            }
+            finally
+            {
+                if(this.conexion.State == ConnectionState.Open)
                 {
-                    if (this.conexion.State == ConnectionState.Open)
-                    {
-                        this.conexion.Close();
-                    }
+                    this.conexion.Close();
                 }
             }
             return listaVehiculos;
         }
+
         public Auto MapearAuto(SqlDataReader reader)
         {
             Auto auto = new Auto();
@@ -108,129 +116,222 @@ namespace Entidades
         public bool InsertarVehiculo<T>(T vehiculo, string tabla) where T : Vehiculo
         {
             bool retorno = false;
-            string parametros = "(Marca, Modelo, AñoFabricacion, Combustible,";
-            string values = "(@Marca, @Modelo, @AñoFabricacion, @Combustible,";
+            string parametros = "(marca, modelo, añoFabricacion, combustible,";
+            string values = "(@marca, @modelo, @añoFabricacion, @combustible,";
 
-            using (SqlConnection conexion = new SqlConnection(connectionStr))
+            if (ExisteVehiculo<Vehiculo>(vehiculo, tabla))
             {
-                conexion.Open();
+                Console.WriteLine("El vehiculo ya existe en la base de datos");
+                return false;
+            }
 
-                if (ExisteVehiculo(vehiculo, tabla))
-                {
-                    Console.WriteLine("El vehiculo ya existe en la base de datos");
-                    return false;
-                }
+            if (vehiculo is Auto auto)
+            {
+                parametros += " numeroPuertas, traccion)";
+                values += " @numeroPuertas, @traccion)";
+                configurarParametrosAuto(auto);
+            }
+            else if (vehiculo is Moto moto)
+            {
+                parametros += " cilindrada, tipoRuedas)";
+                values += " @cilindrada, @tipoRuedas)";
+                configurarParametrosMoto(moto);
+            }
+            else if (vehiculo is Camion camion)
+            {
+                parametros += " cargaMaxima, numeroEjes)";
+                values += " @cargaMaxima, @numeroEjes)";
+                configurarParametrosCamion(camion);
+            }
+            try
+            {
+                this.comando.CommandType = CommandType.Text;
+                this.comando.CommandText = $"INSERT INTO {tabla} {parametros} VALUES {values}";
+                this.comando.Connection = this.conexion;
+                this.conexion.Open();
 
-                if (comando == null)
+                int filasAfectadas = this.comando.ExecuteNonQuery();
+                if (filasAfectadas == 1)
                 {
-                    comando = new SqlCommand("", conexion);
-                }
-                else
-                {
-                    comando.Connection = conexion;
-                }
+                    int ultimoId = ObtenerUltimoIdDesdeBaseDeDatos(tabla);
+                    vehiculo.Id += ultimoId;
 
-                if (vehiculo is Auto auto)
-                {
-                    parametros += " NumeroPuertas, Traccion)";
-                    values += " @NumeroPuertas, @Traccion)";
-                    configurarParametrosAuto(comando, auto);
-                }
-                else if (vehiculo is Moto moto)
-                {
-                    parametros += " Cilindrada, TipoRuedas)";
-                    values += " @Cilindrada, @TipoRuedas)";
-                    configurarParametrosMoto(comando, moto);
-                }
-                else if (vehiculo is Camion camion)
-                {
-                    parametros += " CargaMaxima, NumeroEjes)";
-                    values += " @CargaMaxima, @NumeroEjes)";
-                    configurarParametrosCamion(comando, camion);
-                }
-
-                comando.CommandText = $"INSERT INTO {tabla} {parametros} VALUES {values}";
-
-                try
-                {
-                    comando.ExecuteNonQuery();
                     retorno = true;
                 }
-                catch (Exception ex)
+            }
+            catch(SqlException sqlex)
+            {
+                Console.WriteLine($"Error al insertar vehiculo: {sqlex.Message}");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error al insertar vehiculo: {ex.Message}");
+            }
+            finally
+            {
+                if (this.conexion.State == ConnectionState.Open)
                 {
-                    Console.WriteLine($"Error al insertar vehiculo: {ex.Message}");
-                    retorno = false;
+                    this.conexion.Close();
                 }
             }
             return retorno;
         }
+        private int ObtenerUltimoIdDesdeBaseDeDatos(string tabla)
+        {
+            int ultimoId = 0;
+
+            try
+            {
+                this.comando.Connection.Open();
+
+                this.comando.CommandText = $"SELECT MAX(Id) FROM {tabla}";
+
+                object resultado = this.comando.ExecuteScalar();
+
+                if(resultado != null && int.TryParse(resultado.ToString(), out ultimoId))
+                {
+
+                }
+                else
+                {
+                    ultimoId = 0;
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error al obtener ultimo ID: {ex.Message}");
+            }
+            finally
+            {
+                if (this.comando.Connection.State == ConnectionState.Open)
+                {
+                    this.comando.Connection.Close();
+                }
+            }
+            return ultimoId;
+        }
         private bool ExisteVehiculo<T>(T vehiculo, string tabla) where T : Vehiculo
         {
-            using (SqlConnection conexion = new SqlConnection(connectionStr))
+            try
             {
-                conexion.Open();
+                this.comando = new SqlCommand();
+                this.comando.Parameters.Clear();
+                this.comando.Parameters.AddWithValue("@Marca", vehiculo.Marca);
+                this.comando.Parameters.AddWithValue("@Modelo", vehiculo.Modelo);
+                this.comando.Connection = this.conexion;
+                this.comando.CommandType = CommandType.Text;
+                this.comando.CommandText = $"SELECT COUNT(*) FROM {tabla} WHERE Marca = @Marca AND Modelo = @Modelo";
 
-                using (SqlCommand comando = new SqlCommand("", conexion))
+                this.conexion.Open();
+
+                int filasAfectadas = (int)this.comando.ExecuteScalar();
+
+                return filasAfectadas > 0;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error al seleccionar de la tabla: {ex.Message}");
+                return false;
+            }
+            finally
+            {
+                if (conexion.State == ConnectionState.Open)
                 {
-                    comando.Parameters.AddWithValue("@Marca", vehiculo.Marca);
-                    comando.Parameters.AddWithValue("@Modelo", vehiculo.Modelo);
-
-                    comando.CommandText = $"SELECT COUNT(*) FROM {tabla} WHERE Marca = @Marca AND Modelo = @Modelo";
-
-                    int cantidad = (int)comando.ExecuteScalar();
-                    return cantidad > 0;
+                    conexion.Close();
                 }
             }
         }
-        public bool ModificarDatos(Vehiculo vehiculo, string tabla)
+        public bool ModificarVehiculo<T>(T vehiculo, string tabla) where T : Vehiculo
+        {
+            bool retorno = false;
+            string values = "marca = @marca, modelo = @modelo, añoFabricacion = @añoFabricacion, combustible = @combustible,";
+
+            if (vehiculo is Auto auto)
+            {
+                values += " numeroPuertas = @numeroPuertas, traccion = @traccion";
+                configurarParametrosAuto(auto);
+            }
+            else if (vehiculo is Moto moto)
+            {
+                values += " cilindrada = @cilindrada, tipoRuedas = @tipoRuedas";
+                configurarParametrosMoto(moto);
+            }
+            else if (vehiculo is Camion camion)
+            {
+                values += " cargaMaxima = @cargaMaxima, numeroEjes = @numeroEjes";
+                configurarParametrosCamion(camion);
+            }
+
+            try
+            {
+                this.comando.Parameters.AddWithValue("@Id", ObtenerUltimoIdDesdeBaseDeDatos(tabla));
+                this.comando.CommandType = CommandType.Text;
+                this.comando.CommandText = $"UPDATE {tabla} SET {values} WHERE id = @id";
+                this.comando.Connection = this.conexion;
+
+                this.conexion.Open();
+
+                int filasAfectadas = this.comando.ExecuteNonQuery();
+                if (filasAfectadas == 1)
+                {
+                    retorno = true;
+                }
+            }
+            catch (SqlException sqlEx)
+            {
+                Console.WriteLine($"Error al modificar vehiculo: {sqlEx.Message}");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error al modificar vehiculo: {ex.Message}");
+            }
+            finally
+            {
+                if (this.conexion.State == ConnectionState.Open)
+                {
+                    this.conexion.Close();
+                }
+            }
+            return retorno;
+        }
+        public bool EliminarVehiculo<T>(T vehiculo, string tabla) where T : Vehiculo
         {
             bool retorno = false;
 
-            string values = "Marca = @Marca, Modelo = @Modelo, AñoFabricacion = @AñoFabricacion, Combustible = @Combustible,";
-
             using (SqlCommand comando = new SqlCommand())
             {
-                comando.CommandType = CommandType.Text;
 
-                if (vehiculo is Auto auto)
-                {
-                    values += " numeroPuertas = @numeroPuertas, traccion = @traccion";
-                    configurarParametrosAuto(comando, auto);
-                }
-                else if (vehiculo is Moto moto)
-                {
-                    values += " cilindrada = @cilindrada, tipoRuedas = @tipoRuedas";
-                    configurarParametrosMoto(comando, moto);
-                }
-                else if (vehiculo is Camion camion)
-                {
-                    values += " cargaMaxima = @cargaMaxima, numeroEjes = @numeroEjes";
-                    configurarParametrosCamion(comando, camion);
-                }
+                this.comando.CommandType = CommandType.Text;
 
                 try
                 {
-                    comando.CommandText = $"UPDATE {tabla} SET {values} WHERE id = @id";
+                    this.comando.Parameters.Clear();
+                    this.comando.Parameters.AddWithValue("@Id", vehiculo.Id);
+                    this.comando.CommandType = CommandType.Text;
+                    this.comando.CommandText = $"DELETE FROM {tabla} WHERE id = @id";
 
-                    comando.Connection = conexion;
+                    this.comando.Connection = conexion;
 
-                    conexion.Open();
+                    this.conexion.Open();
 
-                    int filasAfectadas = comando.ExecuteNonQuery();
-
+                    int filasAfectadas = this.comando.ExecuteNonQuery();
                     if (filasAfectadas == 1)
                     {
                         retorno = true;
                     }
                 }
-                catch (Exception ex)
+                catch (SqlException sqlex)
+                {
+                    Console.WriteLine($"Error al eliminar vehiculo de la base de datos", sqlex.Message);
+                }
+                catch(Exception ex)
                 {
                     Console.WriteLine($"Error: {ex.Message}");
-                    throw new Exception("Error al modificar datos en la base de datos", ex);
+                    throw new Exception("Error al eliminar el vehiculo en la base de datos", ex);
                 }
                 finally
                 {
-                    if (conexion.State == ConnectionState.Open)
+                    if(conexion.State == ConnectionState.Open)
                     {
                         conexion.Close();
                     }
@@ -239,33 +340,31 @@ namespace Entidades
 
             return retorno;
         }
-
-        public static void SetearParametrosVehiculo(SqlCommand comando, Vehiculo vehiculo)
+        public void SetearParametrosVehiculo(Vehiculo vehiculo)
         {
-            comando.Parameters.Clear();
-            comando.Parameters.AddWithValue("@Id", vehiculo.Id);
-            comando.Parameters.AddWithValue("@Marca", vehiculo.Marca);
-            comando.Parameters.AddWithValue("@Modelo", vehiculo.Modelo);
-            comando.Parameters.AddWithValue("@AñoFabricacion", vehiculo.AñoFabricacion);
-            comando.Parameters.AddWithValue("@Combustible", vehiculo.TipoCombustible);
+            this.comando.Parameters.Clear();
+            this.comando.Parameters.AddWithValue("@Marca", vehiculo.Marca);
+            this.comando.Parameters.AddWithValue("@Modelo", vehiculo.Modelo);
+            this.comando.Parameters.AddWithValue("@AñoFabricacion", vehiculo.AñoFabricacion);
+            this.comando.Parameters.AddWithValue("@Combustible", vehiculo.TipoCombustible);
         }
-        public static void SetearParametrosAuto(SqlCommand comando, Auto auto)
+        public void SetearParametrosAuto(Auto auto)
         {
-            SetearParametrosVehiculo(comando, auto);
-            comando.Parameters.AddWithValue("@NumeroPuertas", auto.NumeroPuertas);
-            comando.Parameters.AddWithValue("@Traccion", auto.Traccion);
+            SetearParametrosVehiculo(auto);
+            this.comando.Parameters.AddWithValue("@NumeroPuertas", auto.NumeroPuertas);
+            this.comando.Parameters.AddWithValue("@Traccion", auto.Traccion);
         }
-        public static void SetearParametrosMoto(SqlCommand comando, Moto moto)
+        public void SetearParametrosMoto(Moto moto)
         {
-            SetearParametrosVehiculo(comando, moto);
-            comando.Parameters.AddWithValue("@Cilindrada", moto.Cilindrada);
-            comando.Parameters.AddWithValue("@TipoRuedas", moto.TipoRuedas);
+            SetearParametrosVehiculo(moto);
+            this.comando.Parameters.AddWithValue("@Cilindrada", moto.Cilindrada);
+            this.comando.Parameters.AddWithValue("@TipoRuedas", moto.TipoRuedas);
         }
-        public static void SetearParametrosCamion(SqlCommand comando,  Camion camion)
+        public void SetearParametrosCamion(Camion camion)
         {
-            SetearParametrosVehiculo(comando, camion);
-            comando.Parameters.AddWithValue("@CargaMaxima", camion.CargaMaxima);
-            comando.Parameters.AddWithValue("@NumeroEjes", camion.NumeroEjes);
+            SetearParametrosVehiculo(camion);
+            this.comando.Parameters.AddWithValue("@CargaMaxima", camion.CargaMaxima);
+            this.comando.Parameters.AddWithValue("@NumeroEjes", camion.NumeroEjes);
         }
         #endregion
     }

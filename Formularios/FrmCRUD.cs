@@ -13,7 +13,7 @@ namespace Formularios
         private Usuario usuario;
         private FrmLogin login;
         private Garaje garaje = new Garaje();
-        private AccesoDatos accesoDatos = new AccesoDatos();
+        private AccesoDatos accesoDatos;
         #endregion
 
         #region Constructores
@@ -28,11 +28,22 @@ namespace Formularios
 
             this.login = login;
             this.usuario = usuario;
-        }
-        #endregion
+            this.lblPerfil.Text = "Perfil: " + usuario.perfil;
+            this.accesoDatos = new AccesoDatos();
 
-        #region Delegados
-        public delegate Vehiculo MapeadorVehiculo(SqlDataReader reader);
+            if (usuario.perfil == "vendedor")
+            {
+                btnAgregar.Visible = false;
+                btnEliminar.Visible = false;
+                btnModificar.Visible = false;
+                btnVisualizador.Visible = false;
+            }
+            else if (usuario.perfil == "supervisor")
+            {
+                btnEliminar.Visible = false;
+                btnVisualizador.Visible = false;
+            }
+        }
         #endregion
 
         #region Eventos
@@ -91,10 +102,21 @@ namespace Formularios
             if (this.lstbRead.SelectedIndex != -1)
             {
                 int index = lstbRead.SelectedIndex;
-                garaje -= garaje.Vehiculos[index];
+
+                Vehiculo vehiculo = garaje.Vehiculos[index];
+
+                garaje -= vehiculo;
+
+                string tabla = vehiculo.GetType().ToString();
+
+                tabla = tabla.Substring(tabla.LastIndexOf('.') + 1);
+
+                this.accesoDatos.EliminarVehiculo<Vehiculo>(vehiculo, tabla);
+
+                ActualizarLstb();
             }
-            ActualizarLstb();
         }
+
 
         /// <summary>
         /// Evento para modificar un vehículo seleccionado.
@@ -115,7 +137,7 @@ namespace Formularios
                     resultado = frmAuto.ShowDialog();
                     if (resultado == DialogResult.OK)
                     {
-                        accesoDatos.ModificarDatos(frmAuto.Auto, "Auto");
+                        accesoDatos.ModificarVehiculo<Auto>(frmAuto.Auto, "Auto");
                         garaje.Vehiculos[index] = frmAuto.Auto;
                     }
                 }
@@ -126,7 +148,7 @@ namespace Formularios
                     resultado = frmMoto.ShowDialog();
                     if (resultado == DialogResult.OK)
                     {
-                        accesoDatos.ModificarDatos(frmMoto.Moto, "Moto");
+                        accesoDatos.ModificarVehiculo<Moto>(frmMoto.Moto, "Moto");
                         garaje.Vehiculos[index] = frmMoto.Moto;
 
                     }
@@ -138,7 +160,7 @@ namespace Formularios
                     resultado = frmCamion.ShowDialog();
                     if (resultado == DialogResult.OK)
                     {
-                        accesoDatos.ModificarDatos(frmCamion.Camion, "Camion");
+                        accesoDatos.ModificarVehiculo<Camion>(frmCamion.Camion, "Camion");
                         garaje.Vehiculos[index] = frmCamion.Camion;
                     }
                 }
@@ -154,8 +176,6 @@ namespace Formularios
         {
             this.lblUsuario.Text = "Logueado como: " + usuario.nombre + " " + usuario.apellido;
             this.lblFecha.Text = "Hoy es: " + DateTime.Now.ToShortDateString();
-
-            ArchivarDatos();
         }
 
         /// <summary>
@@ -192,21 +212,6 @@ namespace Formularios
             frmVisualizador.Show();
         }
 
-        /// <summary>
-        /// Guarda la colección de vehículos en un archivo JSON.
-        /// </summary>
-        private void btnSerializar_Click(object sender, EventArgs e)
-        {
-            ArchivarColeccion();
-        }
-
-        /// <summary>
-        /// Carga una colección de vehículos desde un archivo JSON.
-        /// </summary>
-        private void btnDeserializar_Click(object sender, EventArgs e)
-        {
-            CargarColeccion();
-        }
         private void btnCargarDatos_Click(object sender, EventArgs e)
         {
             List<Vehiculo> listaVehiculos = null;
@@ -221,23 +226,27 @@ namespace Formularios
             }
             if (frmtipo.Eleccion == 0)
             {
-                listaVehiculos = accesoDatos.LeerListas(this.accesoDatos.MapearAuto, "Auto");
+                listaVehiculos = accesoDatos.LeerListas<Auto>(this.accesoDatos.MapearAuto, "Auto");
             }
             else if (frmtipo.Eleccion == 1)
             {
-                listaVehiculos = accesoDatos.LeerListas(this.accesoDatos.MapearCamion, "Camion");
+                listaVehiculos = accesoDatos.LeerListas<Camion>(this.accesoDatos.MapearCamion, "Camion");
             }
             else if (frmtipo.Eleccion == 2)
             {
-                listaVehiculos = accesoDatos.LeerListas(this.accesoDatos.MapearMoto, "Moto");
+                listaVehiculos = accesoDatos.LeerListas<Moto>(this.accesoDatos.MapearMoto, "Moto");
             }
-            if (listaVehiculos != null)
+            if (listaVehiculos != null && listaVehiculos.Count > 0)
             {
                 foreach (Vehiculo vehiculo in listaVehiculos)
                 {
                     garaje += vehiculo;
                 }
                 ActualizarLstb();
+            }
+            else
+            {
+                MessageBox.Show("La tabla esta vacia", "Aviso", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
             }
         }
         #endregion
@@ -267,84 +276,6 @@ namespace Formularios
                 this.lstbRead.Items.Add(vehiculo.ToString());
             }
         }
-
-        /// <summary>
-        /// Guarda un registro de acceso del usuario en un archivo de registro.
-        /// </summary>
-        private void ArchivarDatos()
-        {
-            string logPath = "usuarios.log";
-            using (StreamWriter sw = File.AppendText(logPath))
-            {
-                string logEntry = $"{DateTime.Now:yyyy-MM-dd HH:mm:ss} - Usuario: {usuario.nombre} {usuario.apellido} accedió a la aplicación";
-                sw.WriteLine(logEntry);
-            }
-        }
-
-        /// <summary>
-        /// Guarda un registro de acceso del usuario en un archivo de registro.
-        /// </summary>
-        private void ArchivarColeccion()
-        {
-            SaveFileDialog fileDialog = new SaveFileDialog();
-            fileDialog.Filter = "Archivos JSON|*.json";
-            fileDialog.Title = "Guardar la colección";
-            try
-            {
-                if (fileDialog.ShowDialog() == DialogResult.OK)
-                {
-                    JsonSerializerSettings settings = new JsonSerializerSettings
-                    {
-                        TypeNameHandling = TypeNameHandling.All,
-                        Formatting = Formatting.Indented
-                    };
-
-                    string json = JsonConvert.SerializeObject(garaje, settings);
-
-                    string rutaArchivo = fileDialog.FileName;
-
-                    File.WriteAllText(rutaArchivo, json);
-                }
-
-            }
-            catch (Exception)
-            {
-                MessageBox.Show("Error al guardar los datos a JSON", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
-        }
-
-        /// <summary>
-        /// Carga una colección de vehículos desde un archivo JSON.
-        /// </summary>
-        private void CargarColeccion()
-        {
-            OpenFileDialog fileDialog = new OpenFileDialog();
-            fileDialog.Filter = "Archivos JSON|*.json";
-            fileDialog.Title = "Cargar la colección";
-
-            try
-            {
-                if (fileDialog.ShowDialog() == DialogResult.OK)
-                {
-                    string rutaArchivo = fileDialog.FileName;
-
-                    JsonSerializerSettings settings = new JsonSerializerSettings
-                    {
-                        TypeNameHandling = TypeNameHandling.All
-                    };
-
-                    string json = File.ReadAllText(rutaArchivo);
-                    garaje = JsonConvert.DeserializeObject<Garaje>(json, settings);
-
-                    ActualizarLstb();
-                }
-            }
-            catch (Exception)
-            {
-                MessageBox.Show("Error al cargar los datos desde JSON", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
-        }
-
         #endregion
     }
 }

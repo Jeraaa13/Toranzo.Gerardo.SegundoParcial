@@ -36,14 +36,13 @@
             lblFecha = new Label();
             btnOrdenar = new Button();
             btnVisualizador = new Button();
-            btnSerializar = new Button();
-            btnDeserializar = new Button();
             btnCargarDatos = new Button();
+            lblPerfil = new Label();
             SuspendLayout();
             // 
             // btnAgregar
             // 
-            btnAgregar.Location = new Point(12, 238);
+            btnAgregar.Location = new Point(12, 266);
             btnAgregar.Name = "btnAgregar";
             btnAgregar.Size = new Size(89, 52);
             btnAgregar.TabIndex = 0;
@@ -53,7 +52,7 @@
             // 
             // btnModificar
             // 
-            btnModificar.Location = new Point(113, 238);
+            btnModificar.Location = new Point(145, 266);
             btnModificar.Name = "btnModificar";
             btnModificar.Size = new Size(75, 52);
             btnModificar.TabIndex = 1;
@@ -63,7 +62,7 @@
             // 
             // btnEliminar
             // 
-            btnEliminar.Location = new Point(203, 238);
+            btnEliminar.Location = new Point(263, 266);
             btnEliminar.Name = "btnEliminar";
             btnEliminar.Size = new Size(83, 52);
             btnEliminar.TabIndex = 2;
@@ -75,7 +74,7 @@
             // 
             lstbRead.FormattingEnabled = true;
             lstbRead.ItemHeight = 15;
-            lstbRead.Location = new Point(12, 33);
+            lstbRead.Location = new Point(12, 61);
             lstbRead.Name = "lstbRead";
             lstbRead.Size = new Size(595, 199);
             lstbRead.TabIndex = 3;
@@ -100,7 +99,7 @@
             // 
             // btnOrdenar
             // 
-            btnOrdenar.Location = new Point(302, 238);
+            btnOrdenar.Location = new Point(385, 266);
             btnOrdenar.Name = "btnOrdenar";
             btnOrdenar.Size = new Size(88, 52);
             btnOrdenar.TabIndex = 6;
@@ -118,29 +117,9 @@
             btnVisualizador.UseVisualStyleBackColor = true;
             btnVisualizador.Click += btnVisualizador_Click;
             // 
-            // btnSerializar
-            // 
-            btnSerializar.Location = new Point(501, 238);
-            btnSerializar.Name = "btnSerializar";
-            btnSerializar.Size = new Size(106, 23);
-            btnSerializar.TabIndex = 8;
-            btnSerializar.Text = "Serializar JSON";
-            btnSerializar.UseVisualStyleBackColor = true;
-            btnSerializar.Click += btnSerializar_Click;
-            // 
-            // btnDeserializar
-            // 
-            btnDeserializar.Location = new Point(501, 267);
-            btnDeserializar.Name = "btnDeserializar";
-            btnDeserializar.Size = new Size(106, 23);
-            btnDeserializar.TabIndex = 9;
-            btnDeserializar.Text = "Deserializar JSON";
-            btnDeserializar.UseVisualStyleBackColor = true;
-            btnDeserializar.Click += btnDeserializar_Click;
-            // 
             // btnCargarDatos
             // 
-            btnCargarDatos.Location = new Point(407, 238);
+            btnCargarDatos.Location = new Point(519, 266);
             btnCargarDatos.Name = "btnCargarDatos";
             btnCargarDatos.Size = new Size(88, 52);
             btnCargarDatos.TabIndex = 10;
@@ -148,14 +127,22 @@
             btnCargarDatos.UseVisualStyleBackColor = true;
             btnCargarDatos.Click += btnCargarDatos_Click;
             // 
+            // lblPerfil
+            // 
+            lblPerfil.AutoSize = true;
+            lblPerfil.Location = new Point(12, 34);
+            lblPerfil.Name = "lblPerfil";
+            lblPerfil.Size = new Size(37, 15);
+            lblPerfil.TabIndex = 11;
+            lblPerfil.Text = "Perfil:";
+            // 
             // FrmCRUD
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(614, 297);
+            ClientSize = new Size(614, 330);
+            Controls.Add(lblPerfil);
             Controls.Add(btnCargarDatos);
-            Controls.Add(btnDeserializar);
-            Controls.Add(btnSerializar);
             Controls.Add(btnVisualizador);
             Controls.Add(btnOrdenar);
             Controls.Add(lblFecha);
@@ -186,8 +173,7 @@
         private Label lblFecha;
         private Button btnOrdenar;
         private Button btnVisualizador;
-        private Button btnSerializar;
-        private Button btnDeserializar;
         private Button btnCargarDatos;
+        private Label lblPerfil;
     }
 }

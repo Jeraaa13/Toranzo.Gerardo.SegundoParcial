@@ -1,4 +1,5 @@
-﻿using System.Text.Json.Serialization;
+﻿using System.Runtime.CompilerServices;
+using System.Text.Json.Serialization;
 
 namespace Entidades
 {
@@ -7,16 +8,18 @@ namespace Entidades
     /// </summary>
     public abstract class Vehiculo
     {
+        #region Atributos
         protected int id;
         protected string marca;
         protected string modelo;
         protected int añoFabricacion;
         protected ETipoCombustible tipoCombustible;
+        #endregion
 
+        #region Propiedades
         /// <summary>
         /// Obtiene o establece la id del vehiculo.
         /// </summary>
-        
         public int Id
         {
             get { return this.id; }
@@ -58,13 +61,14 @@ namespace Entidades
             get { return this.tipoCombustible; }
             set { this.tipoCombustible = value; }
         }
+        #endregion
 
-        /// <summary>
-        /// Obtiene o establece el tipo de combustible del vehículo.
-        /// </summary>
+        #region Constructores
         [JsonConstructor]
+
         public Vehiculo()
         {
+            this.id = 0;
             this.marca = "Default";
             this.modelo = "Default";
             this.añoFabricacion = 2000;
@@ -106,6 +110,9 @@ namespace Entidades
             this.tipoCombustible = tipoCombustible;
         }
 
+        #endregion
+
+        #region Metodos
         /// <summary>
         /// Arranca el vehículo.
         /// </summary>
@@ -119,6 +126,9 @@ namespace Entidades
             Console.WriteLine("El vehículo se ha detenido.");
         }
 
+        #endregion
+
+        #region Sobrecargas
         /// <summary>
         /// Convierte el objeto a una representación de cadena.
         /// </summary>
@@ -135,15 +145,19 @@ namespace Entidades
         /// <returns>True si los vehículos son iguales; de lo contrario, false.</returns>
         public override bool Equals(object? obj)
         {
-            Vehiculo? v = obj as Vehiculo;
+            if (obj is Vehiculo other)
+            {
+                return this.Id == other.Id;
+            }
 
-            return v is not null && this == v;
+            return false;
         }
 
         public override int GetHashCode()
         {
-            throw new NotImplementedException();
+            return this.Id.GetHashCode();
         }
+        #endregion
 
         /// <summary>
         /// Compara dos vehículos para determinar si son iguales.
