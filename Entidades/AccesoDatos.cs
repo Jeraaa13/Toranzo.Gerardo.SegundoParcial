@@ -76,7 +76,6 @@ namespace Entidades
             }
             return listaVehiculos;
         }
-
         public Auto MapearAuto(SqlDataReader reader)
         {
             Auto auto = new Auto();
@@ -334,7 +333,6 @@ namespace Entidades
 
             return retorno;
         }
-
         public void SetearParametrosVehiculo(Vehiculo vehiculo)
         {
             this.comando.Parameters.Clear();

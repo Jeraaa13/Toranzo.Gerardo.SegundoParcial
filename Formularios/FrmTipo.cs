@@ -79,6 +79,7 @@ namespace Formularios
                     this.Hide();
                     this.DialogResult = DialogResult.OK;
                 }
+                this.DialogResult = DialogResult.OK;
             }
             else if (this.rdbCamion.Checked)
             {
@@ -94,6 +95,8 @@ namespace Formularios
                     this.Hide();
                     this.DialogResult = DialogResult.OK;
                 }
+                this.DialogResult = DialogResult.OK;
+
             }
             else if (this.rdbMoto.Checked)
             {
@@ -109,6 +112,8 @@ namespace Formularios
                     this.Hide();
                     this.DialogResult = DialogResult.OK;
                 }
+                this.DialogResult = DialogResult.OK;
+
             }
             else
             {
