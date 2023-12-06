@@ -1,59 +1,60 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="Entidades.AccesoDatos">
+    <Position X="7.75" Y="2.75" Width="1.5" />
+    <NestedTypes>
+      <Delegate Name="Entidades.AccesoDatos.DelegadoMapear&lt;T&gt;" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>AccesoDatos.cs</NewMemberFileName>
+        </TypeIdentifier>
+      </Delegate>
+      <Delegate Name="Entidades.AccesoDatos.DelegadoConfigurarParametros" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>AccesoDatos.cs</NewMemberFileName>
+        </TypeIdentifier>
+      </Delegate>
+    </NestedTypes>
+    <TypeIdentifier>
+      <HashCode>ACAAEAQAAAAAkAIBAIIAAAAAAAQEAAAAACCBiIEAAAk=</HashCode>
+      <FileName>AccesoDatos.cs</FileName>
+    </TypeIdentifier>
+  </Class>
   <Class Name="Entidades.Auto">
-    <Position X="2.5" Y="0.75" Width="1.5" />
+    <Position X="2.5" Y="0.5" Width="1.5" />
     <InheritanceLine Type="Entidades.Vehiculo" FixedToPoint="true">
       <Path>
-        <Point X="1.352" Y="0.5" />
-        <Point X="1.352" Y="0.148" />
-        <Point X="3.5" Y="0.148" />
-        <Point X="3.5" Y="0.75" />
+        <Point X="2" Y="3.438" />
+        <Point X="2.5" Y="3.438" />
       </Path>
     </InheritanceLine>
     <TypeIdentifier>
-      <HashCode>AAAAAAAABAAAAAAEoAAAAAAAAIAAAACAEAAEAAAAAiA=</HashCode>
+      <HashCode>AAAAAAAAAAAAAAAEoAAAAAAAAAAAAACAEAAEAAAAAiA=</HashCode>
       <FileName>Auto.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="Entidades.Camion">
     <Position X="6" Y="0.75" Width="1.5" />
-    <InheritanceLine Type="Entidades.Vehiculo" FixedToPoint="true">
-      <Path>
-        <Point X="1.047" Y="0.5" />
-        <Point X="1.047" Y="0.148" />
-        <Point X="6.688" Y="0.148" />
-        <Point X="6.688" Y="0.75" />
-      </Path>
-    </InheritanceLine>
     <TypeIdentifier>
       <HashCode>AAAAAAEAAAAAAAAEoAAAAAEAAAIAAAACEAAAAAAAAiA=</HashCode>
       <FileName>Camion.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="Entidades.Garaje">
-    <Position X="7.75" Y="1" Width="1.5" />
+    <Position X="11.25" Y="0.5" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAAAAIAAAAAAAAAAQAEAAAgABAAAAAQAAAAAAAAAAiA=</HashCode>
+      <HashCode>AAAAAIAAAAAAAAAAwAEAAAgABAAAAIQAAAAAAAAAAiA=</HashCode>
       <FileName>Garaje.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="Entidades.Moto">
-    <Position X="4.25" Y="0.75" Width="1.5" />
-    <InheritanceLine Type="Entidades.Vehiculo" ManuallyRouted="true" FixedFromPoint="true" FixedToPoint="true">
-      <Path>
-        <Point X="1.188" Y="0.5" />
-        <Point X="1.188" Y="0.148" />
-        <Point X="4.938" Y="0.148" />
-        <Point X="4.938" Y="0.75" />
-      </Path>
-    </InheritanceLine>
+    <Position X="4.25" Y="0.5" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAACAAEoAgAAAAAAAAAAEAAEABAAAAAAiA=</HashCode>
       <FileName>Moto.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="Entidades.Usuario">
-    <Position X="9.5" Y="1" Width="1.5" />
+    <Position X="9.5" Y="0.5" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAQBAACAAAAAAAAAAAQAAACAAAAQAAAAAAA=</HashCode>
       <FileName>Usuario.cs</FileName>
@@ -62,26 +63,33 @@
   <Class Name="Entidades.Vehiculo">
     <Position X="0.5" Y="0.5" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAAgABAAIAAQAAAEoCAAAAAgAAAAAAAAEAgAAAAIAiA=</HashCode>
+      <HashCode>AAAiABAAIAAQAAAEoCAAAAAgAAAAAIAAEAgAAAAIAiA=</HashCode>
       <FileName>Vehiculo.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Enum Name="ETipoCombustible">
-    <Position X="11.25" Y="1" Width="1.5" />
+  <Interface Name="Entidades.IAccesoDatos">
+    <Position X="9.5" Y="2.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>ACAAAAQAAAAAkAIAAAAAAAAAAAQEAAAAACABiIEAAAA=</HashCode>
+      <FileName>IAccesoDatos.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Enum Name="ETipoCombustible" Collapsed="true">
+    <Position X="7.75" Y="1.25" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAgEAAwAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>Enumerados\ETipoCombustible.cs</FileName>
     </TypeIdentifier>
   </Enum>
-  <Enum Name="ETipoRuedas">
-    <Position X="13" Y="1" Width="1.5" />
+  <Enum Name="ETipoRuedas" Collapsed="true">
+    <Position X="7.75" Y="0.5" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAIAAAAAAAAI=</HashCode>
       <FileName>Enumerados\ETipoRuedas.cs</FileName>
     </TypeIdentifier>
   </Enum>
-  <Enum Name="ETraccion">
-    <Position X="13" Y="2.5" Width="1.5" />
+  <Enum Name="ETraccion" Collapsed="true">
+    <Position X="7.75" Y="2" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAACAAAAAAAAAAAACAAAAAAAAAAAQAAAAAAAAAAAAAA=</HashCode>
       <FileName>Enumerados\ETraccion.cs</FileName>
