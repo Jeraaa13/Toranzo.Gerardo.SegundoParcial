@@ -44,7 +44,7 @@ namespace Formularios
             modelo = txtModelo.Text;
 
 
-            if (string.IsNullOrWhiteSpace(marca))
+            if (string.IsNullOrWhiteSpace(marca) || marca.Any(char.IsDigit))
             {
                 MessageBox.Show("Ingrese una marca válido por favor.",
                     "Advertencia",
@@ -53,7 +53,7 @@ namespace Formularios
                 return false;
             }
 
-            if (string.IsNullOrWhiteSpace(modelo))
+            if (string.IsNullOrWhiteSpace(modelo) || modelo.Any(char.IsDigit))
             {
                 MessageBox.Show("Ingrese una modelo válido por favor.",
                     "Advertencia",

@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.Data;
 using System.Drawing;
 using System.Linq;
+using System.Reflection.Metadata;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -77,7 +78,7 @@ namespace Formularios
 
             if (!int.TryParse(this.txtNumPuertas.Text, out int numeroPuertas))
             {
-                MessageBox.Show("Ingrese un numero de puertas valido por favor.",
+                MessageBox.Show("Ingrese un número de puertas válido por favor.",
                                         "Advertencia",
                                         MessageBoxButtons.OK,
                                         MessageBoxIcon.Warning);
@@ -95,12 +96,22 @@ namespace Formularios
 
             marca = txtMarca.Text;
             modelo = txtModelo.Text;
-            añoFabricacion = int.Parse(txtAñoFabricacion.Text);
+
+            if (!int.TryParse(txtAñoFabricacion.Text, out int añoFabricacion))
+            {
+                MessageBox.Show("Ingrese un año de fabricación válido por favor.",
+                                        "Advertencia",
+                                        MessageBoxButtons.OK,
+                                        MessageBoxIcon.Warning);
+                return;
+            }
+
             tipoCombustible = (ETipoCombustible)cbCombustible.SelectedItem;
-            
+
             this.auto = new Auto(numeroPuertas, traccion, marca, modelo, añoFabricacion, tipoCombustible);
 
             DialogResult = DialogResult.OK;
         }
+
     }
 }

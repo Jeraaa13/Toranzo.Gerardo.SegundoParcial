@@ -1,5 +1,6 @@
 ﻿using Entidades;
 using Newtonsoft.Json;
+using System;
 using System.Data.SqlClient;
 
 namespace Formularios
@@ -46,7 +47,12 @@ namespace Formularios
         }
         #endregion
 
+        #region Delegados
+        public delegate void OperacionCompletadaEventHandler(bool exito, string mensaje);
+        #endregion
+
         #region Eventos
+        public event OperacionCompletadaEventHandler OperacionCompletada;
         /// <summary>
         /// Evento que se dispara al cerrar el formulario.
         /// Cierra el formulario de inicio de sesión.
@@ -60,7 +66,7 @@ namespace Formularios
         /// Evento para agregar un nuevo vehículo.
         /// Muestra un formulario para ingresar los detalles del vehículo y lo agrega al garaje.
         /// </summary>
-        private void btnAgregar_Click(object sender, EventArgs e)
+        private async void btnAgregar_Click(object sender, EventArgs e)
         {
             FrmTipo frmtipo = new FrmTipo(true);
 
@@ -69,7 +75,8 @@ namespace Formularios
             {
                 string tipoVehiculo = ObtenerTipoVehiculo(frmtipo.Vehiculo);
 
-                accesoDatos.InsertarVehiculo(frmtipo.Vehiculo, tipoVehiculo);
+                await InsetarVehiculoAsync(frmtipo.Vehiculo);
+                OperacionCompletada?.Invoke(true, "Insercion de datos completada exitosamente");
                 garaje += frmtipo.Vehiculo;
             }
             ActualizarLstb();
@@ -117,12 +124,11 @@ namespace Formularios
             }
         }
 
-
         /// <summary>
         /// Evento para modificar un vehículo seleccionado.
         /// Permite modificar los detalles del vehículo seleccionado.
         /// </summary>
-        private void btnModificar_Click(object sender, EventArgs e)
+        private async void btnModificar_Click(object sender, EventArgs e)
         {
             if (this.lstbRead.SelectedIndex != -1)
             {
@@ -133,22 +139,26 @@ namespace Formularios
                 if (objeto is Auto)
                 {
                     FrmAuto frmAuto = new FrmAuto((Auto)objeto);
+                    this.OperacionCompletada += ManejarOperacionCompletada;
 
                     resultado = frmAuto.ShowDialog();
                     if (resultado == DialogResult.OK)
                     {
-                        accesoDatos.ModificarVehiculo<Auto>(frmAuto.Auto, "Auto");
+                        await ModificarVehiculoAsync(frmAuto.Auto);
+                        OperacionCompletada?.Invoke(true, "Modificacion de datos completada exitosamente");
                         garaje.Vehiculos[index] = frmAuto.Auto;
                     }
                 }
                 else if (objeto is Moto)
                 {
                     FrmMoto frmMoto = new FrmMoto((Moto)objeto);
+                    this.OperacionCompletada += ManejarOperacionCompletada;
+
 
                     resultado = frmMoto.ShowDialog();
                     if (resultado == DialogResult.OK)
                     {
-                        accesoDatos.ModificarVehiculo<Moto>(frmMoto.Moto, "Moto");
+                        await ModificarVehiculoAsync(frmMoto.Moto);
                         garaje.Vehiculos[index] = frmMoto.Moto;
 
                     }
@@ -156,11 +166,12 @@ namespace Formularios
                 else if (objeto is Camion)
                 {
                     FrmCamion frmCamion = new FrmCamion((Camion)objeto);
+                    this.OperacionCompletada += ManejarOperacionCompletada;
 
                     resultado = frmCamion.ShowDialog();
                     if (resultado == DialogResult.OK)
                     {
-                        accesoDatos.ModificarVehiculo<Camion>(frmCamion.Camion, "Camion");
+                        await ModificarVehiculoAsync(frmCamion.Camion);
                         garaje.Vehiculos[index] = frmCamion.Camion;
                     }
                 }
@@ -252,6 +263,68 @@ namespace Formularios
         #endregion
 
         #region Metodos
+        private void ManejarOperacionCompletada(bool exito, string mensaje)
+        {
+            if (exito)
+            {
+                MessageBox.Show($"{mensaje}", "Exito", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
+            else
+            {
+                MessageBox.Show($"{mensaje}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+        private async Task InsetarVehiculoAsync(Vehiculo vehiculo)
+        {
+            try
+            {
+                await Task.Run(() =>
+                {
+                    if (vehiculo is Auto auto)
+                    {
+                        this.accesoDatos.InsertarVehiculo<Auto>(auto, "Auto");
+                    }
+                    else if (vehiculo is Moto moto)
+                    {
+                        this.accesoDatos.InsertarVehiculo<Moto>(moto, "Moto");
+                    }
+                    else if (vehiculo is Camion camion)
+                    {
+                        this.accesoDatos.InsertarVehiculo<Camion>(camion, "Camion");
+
+                    }
+                });
+            }
+            catch (Exception ex)
+            {
+                OperacionCompletada?.Invoke(false, $"Error al insertar vehiculo: {ex.Message}");
+            }
+        }
+        private async Task ModificarVehiculoAsync(Vehiculo vehiculo)
+        {
+            try
+            {
+                await Task.Run(() =>
+                {
+                    if (vehiculo is Auto auto)
+                    {
+                        this.accesoDatos.ModificarVehiculo<Auto>(auto, "Auto");
+                    }
+                    else if (vehiculo is Moto moto)
+                    {
+                        this.accesoDatos.ModificarVehiculo<Moto>(moto, "Moto");
+                    }
+                    else if (vehiculo is Camion camion)
+                    {
+                        this.accesoDatos.ModificarVehiculo<Camion>(camion, "Camion");
+                    }
+                });
+            }
+            catch (Exception ex)
+            {
+                OperacionCompletada?.Invoke(false, $"Error al modificar vehiculo: {ex.Message}");
+            }
+        }
         private string ObtenerTipoVehiculo(Vehiculo vehiculo)
         {
             if (vehiculo is Auto)
@@ -263,7 +336,6 @@ namespace Formularios
 
             throw new InvalidOperationException("Tipo de vehiculo indefinido");
         }
-
         /// <summary>
         /// Actualiza el contenido de la lista de vehículos en el formulario.
         /// </summary>

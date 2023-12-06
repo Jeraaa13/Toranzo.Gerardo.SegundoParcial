@@ -69,7 +69,7 @@ namespace Formularios
             {
                 eleccion = 0;
                 if (leerTabla == true)
-                { 
+                {
                     FrmAuto frmauto = new FrmAuto();
                     resultado = frmauto.ShowDialog();
                     if (resultado == DialogResult.OK)
@@ -77,6 +77,7 @@ namespace Formularios
                         vehiculo = frmauto.Auto;
                     }
                     this.Hide();
+                    this.DialogResult = DialogResult.OK;
                 }
             }
             else if (this.rdbCamion.Checked)
@@ -91,6 +92,7 @@ namespace Formularios
                         vehiculo = frmcamion.Camion;
                     }
                     this.Hide();
+                    this.DialogResult = DialogResult.OK;
                 }
             }
             else if (this.rdbMoto.Checked)
@@ -98,13 +100,14 @@ namespace Formularios
                 eleccion = 2;
                 if (leerTabla == true)
                 {
-                FrmMoto frmmoto = new FrmMoto();
-                resultado = frmmoto.ShowDialog();
-                if (resultado == DialogResult.OK)
-                {
-                    vehiculo = frmmoto.Moto;
-                }
-                this.Hide();
+                    FrmMoto frmmoto = new FrmMoto();
+                    resultado = frmmoto.ShowDialog();
+                    if (resultado == DialogResult.OK)
+                    {
+                        vehiculo = frmmoto.Moto;
+                    }
+                    this.Hide();
+                    this.DialogResult = DialogResult.OK;
                 }
             }
             else
@@ -115,7 +118,6 @@ namespace Formularios
                                 MessageBoxIcon.Warning
                                 );
             }
-            this.DialogResult = DialogResult.OK;
         }
     }
 }

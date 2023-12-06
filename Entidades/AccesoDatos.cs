@@ -298,48 +298,43 @@ namespace Entidades
         {
             bool retorno = false;
 
-            using (SqlCommand comando = new SqlCommand())
+            try
             {
-
+                this.comando.Parameters.Clear();
+                this.comando.Parameters.AddWithValue("@Id", ObtenerUltimoIdDesdeBaseDeDatos(tabla));
                 this.comando.CommandType = CommandType.Text;
+                this.comando.CommandText = $"DELETE FROM {tabla} WHERE id = @id";
 
-                try
+                this.comando.Connection = conexion;
+
+                this.conexion.Open();
+
+                int filasAfectadas = this.comando.ExecuteNonQuery();
+                if (filasAfectadas == 1)
                 {
-                    this.comando.Parameters.Clear();
-                    this.comando.Parameters.AddWithValue("@Id", vehiculo.Id);
-                    this.comando.CommandType = CommandType.Text;
-                    this.comando.CommandText = $"DELETE FROM {tabla} WHERE id = @id";
-
-                    this.comando.Connection = conexion;
-
-                    this.conexion.Open();
-
-                    int filasAfectadas = this.comando.ExecuteNonQuery();
-                    if (filasAfectadas == 1)
-                    {
-                        retorno = true;
-                    }
+                    retorno = true;
                 }
-                catch (SqlException sqlex)
+            }
+            catch (SqlException sqlex)
+            {
+                Console.WriteLine($"Error al eliminar vehiculo de la base de datos: {sqlex.Message}");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error: {ex.Message}");
+                throw new Exception("Error al eliminar el vehiculo en la base de datos", ex);
+            }
+            finally
+            {
+                if (conexion.State == ConnectionState.Open)
                 {
-                    Console.WriteLine($"Error al eliminar vehiculo de la base de datos", sqlex.Message);
-                }
-                catch(Exception ex)
-                {
-                    Console.WriteLine($"Error: {ex.Message}");
-                    throw new Exception("Error al eliminar el vehiculo en la base de datos", ex);
-                }
-                finally
-                {
-                    if(conexion.State == ConnectionState.Open)
-                    {
-                        conexion.Close();
-                    }
+                    conexion.Close();
                 }
             }
 
             return retorno;
         }
+
         public void SetearParametrosVehiculo(Vehiculo vehiculo)
         {
             this.comando.Parameters.Clear();
